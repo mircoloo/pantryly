@@ -4,6 +4,7 @@ from agents import Runner, Agent, function_tool
 from .. import schemas
 import httpx
 import json
+from typing import List
 
 chat_agent = Agent(name="Chef Assistant", 
                    instructions="You are a helpful assistant which receives a list of products from the pantry and have to suggest  \
@@ -13,24 +14,21 @@ chat_agent = Agent(name="Chef Assistant",
                    model="gpt-4o-mini",
                    )
 
-products = [
-                {"name":"nutella","barcode":"3017620422003","expiration_date":"2026-01-22"},
-                {"name":"tonno rio mare","barcode":"8004030103818","expiration_date":"2026-01-23"},
-                {"name":"pasta barilla","barcode":"076808280081","expiration_date":"2026-01-23"},
-                {"name":"avocado coop","barcode":"8001120737335","expiration_date":"2026-01-23"},
-            ]
+async def process_request(request: schemas.AIChatRequest, products: List[schemas.Product]):
 
-async def process_request(request: schemas.AIChatRequest):
-    result = await Runner.run(chat_agent, 
-                              input=[
-                                        {
-                                            "role": "user",
-                                            "content": [
-                                                {
-                                                    "type": "input_text",
-                                                    "text": json.dumps(products, indent=2)
-                                                }]
-                                        }
-                                    ]
-                            )
+    
+    products_data = [p.model_dump() for p in products]
+    prompt_content = f"Domanda dell'utente: Creami una ricetta con i prodotti elencati: \n\n Ecco la lista dei prodotti disponibili in formato JSON:\n {json.dumps(products_data, indent=2)}"
+    
+    
+    result = await Runner.run(
+        chat_agent, 
+        input=[
+            {
+                "role": "user",
+                "content": prompt_content 
+            }
+        ]
+    )
+    
     return result.final_output
