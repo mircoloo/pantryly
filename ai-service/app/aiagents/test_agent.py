@@ -10,25 +10,42 @@ chat_agent = Agent(name="Chef Assistant",
                    instructions="You are a helpful assistant which receives a list of products from the pantry and have to suggest  \
                    some receipe to the user, your language is Italian you must answer in this language. Use ONLY the products provided \
                        Do not ask to the user if has other ingredients. just use the one in the provided,. Furthermore ask product based on the expiration date\
-                           so if they are almost to the deadline use those first ingredient", 
+                           so if they are almost to the deadline use those first ingredient. Devi ritornare gli ingredienti da utilizzare, e la ricetta. Inoltre il nome della ricetta e il tipo di piatto (se dolce, primo piatto etc \
+                            Puoi ritornare anche una lista di ricette se ti va in modo da dare più idee se le hai", 
                    model="gpt-4o-mini",
+                   output_type=List[schemas.Receipe]
                    )
 
-async def process_request(request: schemas.AIChatRequest, products: List[schemas.Product]):
+categorization_product = Agent(name="Categorizzatore di prodotti", 
+                   instructions="Sei un agente che deve categorizzare i vari prodotti in modo che siano ben organizzati da mostrare all'utente in maniera chiara. \
+                       Per esempio prodotti per la colazione, per il bagno, per i primi piatti etc", 
+                   model="gpt-4o-mini",
+                   output_type=List[schemas.CategorizedProduct]
+                   )
 
+
+async def process_get_categorized_products(products: List[schemas.Product]):
+    query: str = f"Given the ingredients given here: {json.dumps(products, indent=2)} give a category at each product and return the same but with the category"
+    result = await Runner.run(categorization_product, 
+                              input=[
+                                        {
+                                            "role": "user",
+                                            "content": query
+                                        }
+                                    ]
+                            )
+    return result.final_output
+
+async def process_request(products : List[schemas.Product]):
     
-    products_data = [p.model_dump() for p in products]
-    prompt_content = f"Domanda dell'utente: Creami una ricetta con i prodotti elencati: \n\n Ecco la lista dei prodotti disponibili in formato JSON:\n {json.dumps(products_data, indent=2)}"
+    query: str = f"Given the ingredients given here: {json.dumps(products, indent=2)} suggest a nice and delicious receipe, is not necessary to use all the ingredients, the receipe has to have some sense. Respond in language Italian."
     
-    
-    result = await Runner.run(
-        chat_agent, 
-        input=[
-            {
-                "role": "user",
-                "content": prompt_content 
-            }
-        ]
-    )
-    
+    result = await Runner.run(chat_agent, 
+                              input=[
+                                        {
+                                            "role": "user",
+                                            "content": query
+                                        }
+                                    ]
+                            )
     return result.final_output
