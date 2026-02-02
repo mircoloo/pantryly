@@ -5,6 +5,15 @@ from .. import schemas
 import httpx
 import json
 from typing import List
+from openai import OpenAI
+import os
+
+google_api_key = os.getenv('GOOGLE_API_KEY')
+
+gemini = OpenAI(api_key=google_api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+
+
+
 
 chat_agent = Agent(name="Chef Assistant", 
                    instructions="You are a helpful assistant which receives a list of products from the pantry and have to suggest  \
@@ -49,3 +58,16 @@ async def process_request(products : List[schemas.Product]):
                                     ]
                             )
     return result.final_output
+
+async def get_response_chat(request_text: str):
+    print(request_text)
+    messages = [{"role": "user", "content": request_text}]
+    
+    response = gemini.chat.completions.parse(
+        model="gemini-3-flash-preview",
+        messages=messages,
+        response_format=schemas.AIChatResponse
+    )
+    # If using response_format, the returned object is already your model
+    return response.choices[0].message.parsed
+    

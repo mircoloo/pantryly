@@ -13,6 +13,9 @@ class Receipe(BaseModel):
 class AIChatRequest(BaseModel):
     request: str
     
+class AIChatResponse(BaseModel):
+    response: str
+    
 class Product(BaseModel):
     name: str
     expiration_date: date

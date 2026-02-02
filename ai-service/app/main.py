@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .aiagents.test_agent import process_request, process_get_categorized_products
+from .aiagents.test_agent import process_request, process_get_categorized_products, get_response_chat
 from . import schemas
 import httpx
 from .services.product_client import ProductServiceClient
@@ -20,4 +20,9 @@ async def get_receipe_from_products():
 @app.get("/get_categorized_product")
 async def get_categorized_products():
     products = await product_service_client.get_all_products()
+
     return await process_get_categorized_products(products)
+
+@app.post("/chat", response_model=schemas.AIChatResponse)
+async def chat(req: schemas.AIChatRequest):
+    return await get_response_chat(req.request)
