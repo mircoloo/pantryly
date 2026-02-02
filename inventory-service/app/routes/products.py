@@ -23,8 +23,6 @@ def get_products(db: Session = Depends(get_db)):
 def get_products(id: int, db: Session = Depends(get_db)):
     return repository.get_product(id, db)
 
-
-
 @router.delete("/{id}")
 def delte_products(id: int, db: Session = Depends(get_db)):
     to_delete = db.query(models.Product).filter(models.Product.id == id).first()
