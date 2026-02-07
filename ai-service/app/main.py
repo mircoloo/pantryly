@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .aiagents.test_agent import process_request, process_get_categorized_products, get_response_chat
+from .aiagents import create_receipe_agent, create_categorization_products_agent, get_response_chat
 from . import schemas
 import httpx
 from .services.product_client import ProductServiceClient
@@ -15,13 +15,14 @@ def test_endpoint():
 async def get_receipe_from_products():
     # Retrieve products from the db
     products = await product_service_client.get_all_products()
-    return await process_request(products)
+    print(products)
+    return await create_receipe_agent(products)
 
 @app.get("/get_categorized_product")
 async def get_categorized_products():
     products = await product_service_client.get_all_products()
 
-    return await process_get_categorized_products(products)
+    return await create_categorization_products_agent(products)
 
 @app.post("/chat", response_model=schemas.AIChatResponse)
 async def chat(req: schemas.AIChatRequest):
