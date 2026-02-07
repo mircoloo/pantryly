@@ -22,9 +22,6 @@ class AIChatRequest(BaseModel):
 class AIChatResponse(BaseModel):
     response: str
 
-    
-
-    
 class CategorizedProduct(Product):
     category: str
 

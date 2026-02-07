@@ -43,7 +43,6 @@ async def process_get_categorized_products(products: List[schemas.Product]):
     )
     # If using response_format, the returned object is already your model
     return response.choices[0].message.parsed
-    return result.final_output
 
 async def process_request(products : List[schemas.Product]):
     query: str = f"Given the ingredients given here: {json.dumps(products, indent=2)} suggest a nice and delicious receipe, is not necessary to use all the ingredients, the receipe has to have some sense. Respond in language Italian."
