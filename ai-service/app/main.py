@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from .aiagents import create_receipe_agent, create_categorization_products_agent, get_response_chat
 from . import schemas
-import httpx
 from .services.product_client import ProductServiceClient
 app = FastAPI()
 
