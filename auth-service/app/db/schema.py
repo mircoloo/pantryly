@@ -1,4 +1,4 @@
-from sqlalchemy import String, create_engine
+from sqlalchemy import String, create_engine, Column, Integer
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
@@ -8,10 +8,12 @@ engine = create_engine(config.DB_URL)
 
 LocalSession = sessionmaker(bind=engine, autoflush=False)
 
-Base = DeclarativeBase()
+class Base(DeclarativeBase):
+    pass
+
 
 def create_db_and_tables():
-    Base.metadata.create_all(engine)
+    Base.metadata.create_all(bind=engine)
 
 async def get_db():
     db = LocalSession()
@@ -19,3 +21,7 @@ async def get_db():
         yield db
     finally:
         db.close()
+        
+
+
+    
