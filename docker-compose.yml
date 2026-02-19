@@ -1,16 +1,16 @@
 services:
   inventory-service:
-    build: ./inventory-service
+    build: ./services/inventory-service
     container_name: inventory
     ports: 
       - 8001:8000
     env_file:
-      - ./inventory-service/.env
+      - ./services/inventory-service/.env
 
   ai-service:
-    build: ./ai-service
+    build: ./services/ai-service
     container_name: receipe_ai
     ports:
       - 8002:8000
     env_file:
-      - ./ai-service/.env
+      - ./services/ai-service/.env
