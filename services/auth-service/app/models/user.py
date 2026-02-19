@@ -1,7 +1,9 @@
 from sqlalchemy import Column, String, Integer
-from ..db.schema import Base
+from app.core.database import Base
+    
 class User(Base):
-    __tablename__ = "Users"
-    id = Column(Integer, primary_key=True)
-    username = Column(String(20), unique=True, nullable=False)
-    password_hashed = Column(String, nullable=False)
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column(String)

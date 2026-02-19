@@ -3,12 +3,11 @@ from pydantic_settings import BaseSettings
 
 load_dotenv()
 
-
 class Config(BaseSettings):
     DB_USER: str = ""
     DB_PASSWORD: str = ""
-    DB_NAME: str = "test.db"
-    DB_URL: str = "sqlite:///./auth_service.db"
+    DB_NAME: str = ""
+    DB_URL: str = ""
     
 config = Config()
     
