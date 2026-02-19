@@ -9,7 +9,10 @@ class Config(BaseSettings):
     DB_NAME: str = ""
     DB_URL: str = ""
     
+    SECRET_KEY: str = ''
+    ALGORITHM: str = 'HS256'
+    
+    
 config = Config()
+
     
-    
-print(config.DB_URL)
