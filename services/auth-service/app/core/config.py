@@ -9,8 +9,9 @@ class Config(BaseSettings):
     DB_NAME: str = ""
     DB_URL: str = ""
     
-    SECRET_KEY: str = ''
-    ALGORITHM: str = 'HS256'
+    JWT_SECRET: str = ''
+    JWT_ALGORITHM: str = 'HS256'
+    JWT_EXPIRATION_TIME: int = 15
     
     
 config = Config()
