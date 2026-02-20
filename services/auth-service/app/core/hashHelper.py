@@ -1,4 +1,3 @@
-from jose import JWTError, jwt
 from bcrypt import checkpw, hashpw, gensalt
 from app.core.config import config
 import logging

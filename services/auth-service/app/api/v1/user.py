@@ -6,7 +6,7 @@ from app.repositories.user_repository import UserRepository
 from app.services.user_service import UserService
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/v1/users",
     tags=["Users"]
 )
 

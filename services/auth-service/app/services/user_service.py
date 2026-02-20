@@ -30,23 +30,21 @@ class UserService:
     
     def get_user_by_username(self, username: str) -> User | None:
         res = self.repo.get_by_username(username)
-        logger.info(f"{username=} {res=}")
         return res
     
     def login(self, user_login: UserLogin) -> UserWithToken:
         user = self.repo.get_by_username(user_login.username)
-        logger.info(f"{user.username=}  {user.hashed_password=}")
         if not user: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="User not found")
+        logger.info(f"{user.username=}  {user.hashed_password=} {HashHelper.get_password_hash(user_login.password)=}")
         if HashHelper.verify_password(user_login.password, user.hashed_password):
             token = AuthHandler.sign_jwt(user.id)
-            logger.info(f"User authenticated and returned token: {token}")
             if token:
                 return UserWithToken(token = token)
             else:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                     detail="Unable to process request")
         else:
-            HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail="Check your credentials")

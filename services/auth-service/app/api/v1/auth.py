@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/auth",
+    prefix="/v1//auth",
     tags=["Auth"]
 )
 
@@ -19,6 +19,7 @@ def get_user_service(db: Session = Depends(get_db)):
 
 @router.post("/login")
 def login(user: UserLogin, service: UserService = Depends(get_user_service)):
-    logger.info(f"{user=}")
-    return service.login(user)
-
+    try:
+        return service.login(user)
+    except Exception as error:
+        raise error
