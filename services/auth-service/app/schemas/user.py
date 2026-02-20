@@ -24,4 +24,6 @@ class UserLogin(BaseModel):
     password: str
     
 class UserWithToken(BaseModel):
-    token : str
+    """Risposta OAuth2-compatibile con il JWT."""
+    access_token: str
+    token_type: str = "bearer"

@@ -9,7 +9,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiamo il codice sorgente
 COPY . .
 
-# Il gateway ascolta sulla porta 8000 internamente
 EXPOSE 8000
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

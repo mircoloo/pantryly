@@ -1,12 +1,23 @@
-from dotenv import load_dotenv
-load_dotenv()
-from agents import Runner, Agent, function_tool
-import httpx
-import json
-from typing import List
-from openai import OpenAI
+"""
+Utility condivise dagli agenti AI.
+
+Configura il client OpenAI SDK puntando alle API di Google Gemini
+(compatibilità OpenAI).
+
+La chiave API viene caricata dalla variabile d'ambiente GOOGLE_API_KEY.
+"""
 import os
 
-google_api_key = os.getenv('GOOGLE_API_KEY')
+from dotenv import load_dotenv
+from openai import OpenAI
 
-gemini_client = OpenAI(api_key=google_api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+load_dotenv()
+
+# Chiave API per Google Gemini (via OpenAI-compatible endpoint)
+google_api_key = os.getenv("GOOGLE_API_KEY", "")
+
+# Client configurato per usare le API Gemini con l'SDK OpenAI
+gemini_client = OpenAI(
+    api_key=google_api_key,
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+)

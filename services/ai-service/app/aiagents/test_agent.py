@@ -1,20 +1,23 @@
-from dotenv import load_dotenv
-load_dotenv()
-from agents import Runner, Agent, function_tool
+"""
+Agente AI per la chat libera.
+
+Riceve un messaggio di testo e restituisce la risposta del modello Gemini.
+"""
 from .. import schemas
-import httpx
-import json
-from typing import List
-from openai import OpenAI
-import os
 from .agent_utils import gemini_client
 
-async def get_response_chat(request_text: str):
+
+async def get_response_chat(request_text: str) -> schemas.AIChatResponse:
+    """
+    Chat generica con l'assistente AI.
+    Usa response_format per ottenere una risposta strutturata.
+    """
     messages = [{"role": "user", "content": request_text}]
+
     response = gemini_client.chat.completions.parse(
         model="gemini-3-flash-preview",
         messages=messages,
-        response_format=schemas.AIChatResponse
+        response_format=schemas.AIChatResponse,
     )
     return response.choices[0].message.parsed
-    
+
