@@ -6,15 +6,11 @@ Gestisce:
   - Consultazione inventario
 """
 import logging
-
 from dotenv import load_dotenv
-
 load_dotenv()
-
 from fastapi import FastAPI, status
-
-from .database import create_db_and_tables
-from .routes import products
+from app.core.database import create_db_and_tables
+from app.api.v1 import products
 
 # Logging strutturato
 logging.basicConfig(

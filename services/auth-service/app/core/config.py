@@ -11,7 +11,7 @@ class Config(BaseSettings):
     """Impostazioni del servizio di autenticazione."""
 
     # ── Database ─────────────────────────────────────────────────────
-    DB_URL: str = "sqlite:///./auth_service.db"
+    DATABASE_URL: str = ""
 
     # ── JWT ───────────────────────────────────────────────────────────
     JWT_SECRET: str = ""          # OBBLIGATORIO: impostare nel .env

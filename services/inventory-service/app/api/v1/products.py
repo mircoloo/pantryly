@@ -15,8 +15,8 @@ from typing import List
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
-from .. import repository, schemas
-from ..database import get_db
+from app import repository, schemas
+from app.core.database import get_db
 
 router = APIRouter(tags=["Products"], prefix="/v1/products")
 

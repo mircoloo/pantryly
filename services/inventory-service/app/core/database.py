@@ -4,12 +4,11 @@ Configurazione database per l'inventory-service.
 In sviluppo usa SQLite; in produzione basta cambiare DATABASE_URL
 nel file .env per puntare a PostgreSQL/MySQL.
 """
-import os
-
+from app.core.config import config  
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+DATABASE_URL = config.DATABASE_URL
 
 # check_same_thread serve solo per SQLite
 connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}

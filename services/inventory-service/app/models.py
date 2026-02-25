@@ -6,7 +6,7 @@ L'utente può vedere e gestire solo i propri prodotti (multi-tenancy).
 """
 from sqlalchemy import Column, Date, Integer, String
 
-from .database import Base
+from app.core.database import Base
 
 
 class Product(Base):

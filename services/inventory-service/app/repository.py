@@ -8,7 +8,7 @@ l'utente vede e gestisce solo i propri prodotti.
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from app import models, schemas
 
 
 def create_product(
