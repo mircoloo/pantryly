@@ -7,8 +7,8 @@ e genera suggerimenti di ricette usando Gemini.
 import json
 from typing import List
 
-from .. import schemas
-from .agent_utils import gemini_client
+from app import schemas
+from app.aiagents.agent_utils import gemini_client
 
 
 async def create_receipe_agent(

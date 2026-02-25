@@ -8,7 +8,7 @@ In Docker, il servizio è raggiungibile tramite il nome del container.
 import logging
 import os
 from typing import List
-
+from app.core.config import config  
 import httpx
 
 from .. import schemas
@@ -16,7 +16,7 @@ from .. import schemas
 logger = logging.getLogger(__name__)
 
 # URL dell'inventory-service (risolto via Docker network in produzione)
-BASE_URL = os.environ.get("PRODUCT_SERVICE_URL", "http://inventory-service:8000")
+BASE_URL = config.PRODUCT_SERVICE_URL
 
 
 class ProductServiceClient:
