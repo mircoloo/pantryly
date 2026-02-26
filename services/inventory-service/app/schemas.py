@@ -25,5 +25,5 @@ class ProductShow(BaseModel):
     barcode: str
     expiration_date: Optional[date] = None
 
-    class Config:
+    class ConfigDict:
         from_attributes = True  # supporto ORM → Pydantic

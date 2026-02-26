@@ -6,7 +6,7 @@ class Config(BaseSettings):
     # ── Database ─────────────────────────────────────────────────────
     DATABASE_URL: str = ""
 
-    class Config:
+    class ConfigDict:
         env_file = ".env"
 
 

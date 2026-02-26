@@ -5,92 +5,70 @@ Accesso diretto al DB – nessuna logica di business qui.
 Tutte le query sono filtrate per user_id (multi-tenancy):
 l'utente vede e gestisce solo i propri prodotti.
 """
-from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-
 from app import models, schemas
 
+class ProductRepository:
+    def __init__(self, db: Session):
+        self.db = db
 
-def create_product(
-    request: schemas.ProductCreate, user_id: int, db: Session
-) -> models.Product:
-    """
-    Crea un nuovo prodotto per l'utente specificato.
-    Solleva 400 se l'utente ha già un prodotto con lo stesso nome.
-    """
-    existing = (
-        db.query(models.Product)
-        .filter(
-            models.Product.user_id == user_id,
-            models.Product.name == request.name,
-        )
-        .first()
-    )
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Product named '{request.name}' already inserted",
-        )
-
-    new_product = models.Product(
+    def create_product(self, request: schemas.ProductCreate, user_id: int) -> models.Product:
+        """ Crea un nuovo prodotto associato all'utente. Solleva 400 se nome o barcode già esistono per l'utente. """
+        new_product = models.Product(
         user_id=user_id,
         name=request.name,
         expiration_date=request.expiration_date,
         barcode=request.barcode,
     )
-    db.add(new_product)
-    db.commit()
-    db.refresh(new_product)
-    return new_product
+        self.db.add(new_product)
+        self.db.commit()
+        self.db.refresh(new_product)
+        return new_product
 
 
-def get_products(user_id: int, db: Session) -> list[models.Product]:
-    """Restituisce tutti i prodotti dell'utente."""
-    return (
-        db.query(models.Product)
-        .filter(models.Product.user_id == user_id)
-        .all()
-    )
-
-
-def get_product(id: int, user_id: int, db: Session) -> models.Product:
-    """
-    Restituisce un prodotto per id, solo se appartiene all'utente.
-    Solleva 404 se non trovato o non di proprietà dell'utente.
-    """
-    product = (
-        db.query(models.Product)
-        .filter(
-            models.Product.id == id,
-            models.Product.user_id == user_id,
+    def get_products(self,user_id: int) -> list[models.Product]:
+        return (
+            self.db.query(models.Product)
+            .filter(models.Product.user_id == user_id)
+            .all()
         )
-        .first()
-    )
-    if not product:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Product id {id} not found",
-        )
-    return product
 
 
-def delete_product(id: int, user_id: int, db: Session) -> None:
-    """
-    Elimina un prodotto per id, solo se appartiene all'utente.
-    Solleva 404 se non trovato o non di proprietà dell'utente.
-    """
-    product = (
-        db.query(models.Product)
-        .filter(
-            models.Product.id == id,
-            models.Product.user_id == user_id,
+    def get_product_by_id(self, id: int, user_id: int) -> models.Product:
+        product = (
+            self.db.query(models.Product)
+            .filter(
+                models.Product.id == id,
+                models.Product.user_id == user_id,
+            )
+            .first()
         )
-        .first()
-    )
-    if not product:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found",
+        return product
+    
+    def get_product_by_barcode(self, barcode: str, user_id: int) -> models.Product:
+        product = self.db.query(models.Product).filter(models.Product.user_id == user_id, models.Product.barcode == barcode).first()
+        return product
+    
+    def get_product_by_name(self, name: str, user_id: int) -> models.Product:
+        product = (
+            self.db.query(models.Product)
+            .filter(
+                models.Product.user_id == user_id,
+                models.Product.name == name,
+            )
+            .first()
         )
-    db.delete(product)
-    db.commit()
+        return product
+
+
+    def delete_product(self, id: int, user_id: int) -> None:
+        product = (
+            self.db.query(models.Product)
+            .filter(
+                models.Product.id == id,
+                models.Product.user_id == user_id,
+            )
+            .first()
+        )
+        self.db.delete(product)
+        self.db.commit()

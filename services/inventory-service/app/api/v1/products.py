@@ -1,9 +1,4 @@
 """
-Rotte REST per la gestione dei prodotti.
-
-Ogni operazione è filtrata per user_id, estratto dall'header x-user-id
-che il Gateway aggiunge dopo aver validato il JWT.
-
 Flussi supportati:
   - POST   /v1/products       → crea un prodotto (per l'utente autenticato)
   - GET    /v1/products       → elenca i prodotti dell'utente
@@ -14,18 +9,18 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
-
+from app.repository import ProductRepository
+from app.service import ProductService
 from app import repository, schemas
 from app.core.database import get_db
 
 router = APIRouter(tags=["Products"], prefix="/v1/products")
 
+def get_product_service(db: Session = Depends(get_db)):
+    repo = ProductRepository(db)
+    return ProductService(repo)
 
 def _get_user_id(x_user_id: str = Header(...)) -> int:
-    """
-    Dependency che estrae l'header x-user-id iniettato dal Gateway.
-    Solleva 401 se l'header è assente o non numerico.
-    """
     try:
         return int(x_user_id)
     except (ValueError, TypeError):
@@ -36,22 +31,14 @@ def _get_user_id(x_user_id: str = Header(...)) -> int:
 
 
 @router.post("", response_model=schemas.ProductShow, status_code=status.HTTP_201_CREATED)
-def create_product(
-    request: schemas.ProductCreate,
-    user_id: int = Depends(_get_user_id),
-    db: Session = Depends(get_db),
-):
-    """Crea un nuovo prodotto associato all'utente autenticato."""
-    return repository.create_product(request, user_id, db)
+def create_product(request: schemas.ProductCreate, user_id: int = Depends(_get_user_id), service: ProductService = Depends(get_product_service)):
+    return service.create_product(request, user_id)
 
 
 @router.get("", response_model=List[schemas.ProductShow], status_code=status.HTTP_200_OK)
-def list_products(
-    user_id: int = Depends(_get_user_id),
-    db: Session = Depends(get_db),
-):
+def list_products(user_id: int = Depends(_get_user_id), service: ProductService = Depends(get_product_service)):
     """Elenca tutti i prodotti dell'utente autenticato."""
-    return repository.get_products(user_id, db)
+    return service.get_all_products(user_id)
 
 
 @router.get("/{product_id}", response_model=schemas.ProductShow, status_code=status.HTTP_200_OK)
