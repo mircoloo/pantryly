@@ -5,7 +5,7 @@ from app.core.database import get_db
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from app.models import Base
+from app.core.database import Base
 from app.api.v1.products import _get_user_id
 
 SQLALCHEMY_DATABASE_URL = "sqlite://"

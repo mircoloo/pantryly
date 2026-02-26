@@ -47,3 +47,12 @@ def test_get_all_products(client):
     res = client.get("/v1/products")
     assert len(res.json()) == 2
     
+def test_delete_product(client):
+    response_1 = client.post("/v1/products", json={"name": "Test Product 1","barcode": "123","expiration_date": "2025-12-31"})
+    assert response_1.status_code == 201
+    delete_response = client.delete("/v1/products/1")
+    assert delete_response.status_code == 204 
+    
+def test_delete_product_doesnt_exists(client):
+    delete_response = client.delete("/v1/products/1")
+    assert delete_response.status_code == 400

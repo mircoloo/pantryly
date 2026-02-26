@@ -42,20 +42,10 @@ def list_products(user_id: int = Depends(_get_user_id), service: ProductService 
 
 
 @router.get("/{product_id}", response_model=schemas.ProductShow, status_code=status.HTTP_200_OK)
-def get_product(
-    product_id: int,
-    user_id: int = Depends(_get_user_id),
-    db: Session = Depends(get_db),
-):
-    """Recupera un prodotto per id (solo se dell'utente)."""
-    return repository.get_product(product_id, user_id, db)
+def get_product_by_id(product_id: int, user_id: int = Depends(_get_user_id), service: ProductService = Depends(get_product_service)):
+    return service.get_product_by_id(product_id=product_id, user_id=user_id)
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(
-    product_id: int,
-    user_id: int = Depends(_get_user_id),
-    db: Session = Depends(get_db),
-):
-    """Elimina un prodotto per id (solo se dell'utente)."""
-    repository.delete_product(product_id, user_id, db)
+def delete_product(product_id: int, user_id: int = Depends(_get_user_id), service: ProductService = Depends(get_product_service)):
+    return service.delete_product_by_id(user_id, product_id)
