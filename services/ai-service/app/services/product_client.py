@@ -5,11 +5,13 @@ Questo modulo permette all'ai-service di recuperare la lista dei prodotti
 dall'inventory-service via rete (chiamata servizio-a-servizio).
 In Docker, il servizio è raggiungibile tramite il nome del container.
 """
+
 import logging
 import os
 from typing import List
-from app.core.config import config  
+
 import httpx
+from app.core.config import config
 
 from .. import schemas
 

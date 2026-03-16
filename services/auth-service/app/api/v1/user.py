@@ -4,13 +4,13 @@ Endpoint CRUD per gli utenti.
 La registrazione (POST /v1/users) è esposta anche dal Gateway
 tramite il proxy /auth/register.
 """
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserResponse
 from app.services.user_service import UserService
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
 router = APIRouter(
     prefix="/v1/users",
@@ -46,4 +46,3 @@ def get_user_by_id(user_id: int, service: UserService = Depends(get_user_service
 def list_users(service: UserService = Depends(get_user_service)):
     """Elenca tutti gli utenti."""
     return service.get_all_users()
-

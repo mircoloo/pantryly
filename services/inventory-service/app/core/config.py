@@ -12,4 +12,3 @@ class Config(BaseSettings):
 
 # Istanza singleton importata da tutti i moduli
 config = Config()
-

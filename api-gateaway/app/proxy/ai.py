@@ -8,16 +8,16 @@ tramite l'header interno `x-user-id`.
 Nota: il timeout è più generoso (60 s) perché le chiamate AI
 (generazione ricette, categorizzazione) possono richiedere più tempo.
 """
+
 import logging
 from typing import Optional
 
 import httpx
-from fastapi import APIRouter, Depends, Response
-from pydantic import BaseModel
-
+from app import schemas
 from app.core.config import settings
 from app.core.security import get_current_user
-from app import schemas
+from fastapi import APIRouter, Depends, Response
+from pydantic import BaseModel
 
 logger = logging.getLogger("gateway.ai")
 

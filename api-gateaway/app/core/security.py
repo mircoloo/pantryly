@@ -11,11 +11,11 @@ Claim JWT attesi:
   - "sub" : id numerico dell'utente (stringa)
   - "exp" : timestamp di scadenza (gestito automaticamente da python-jose)
 """
+
+from app.core.config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-
-from app.core.config import settings
 
 # Schema OAuth2: il client invia il token nell'header
 # "Authorization: Bearer <token>"
@@ -51,4 +51,3 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
         return payload
     except JWTError:
         raise credentials_exception
-

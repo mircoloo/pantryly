@@ -18,11 +18,11 @@ Flusso:
 Rotte pubbliche (senza JWT): /auth/login, /auth/register
 Rotte protette (con JWT):    /products/*, /ai/*
 """
+
 import logging
 
+from app.proxy import ai, auth, product
 from fastapi import FastAPI
-
-from app.proxy import auth, product, ai
 
 # ── Logging strutturato ──────────────────────────────────────────────
 logging.basicConfig(
@@ -53,4 +53,3 @@ logger.info("Gateway avviato – rotte registrate")
 async def health_check():
     """Endpoint di health-check usato da Docker / load-balancer."""
     return {"status": "ok"}
-

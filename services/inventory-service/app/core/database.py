@@ -1,7 +1,6 @@
-from app.core.config import config  
+from app.core.config import config
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
-
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 DATABASE_URL = config.DATABASE_URL
 
@@ -12,6 +11,7 @@ engine = create_engine(DATABASE_URL, connect_args=connect_args)
 
 class Base(DeclarativeBase):
     """Classe base per tutti i modelli SQLAlchemy."""
+
     pass
 
 
@@ -33,4 +33,3 @@ def get_db():
         yield db
     finally:
         db.close()
-

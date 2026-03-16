@@ -4,8 +4,10 @@ Agente AI per la categorizzazione dei prodotti.
 Riceve una lista di prodotti e chiede al modello Gemini
 di assegnare una categoria semantica a ciascuno.
 """
+
 import json
 from typing import List
+
 from app import schemas
 from app.aiagents.agent_utils import gemini_client
 

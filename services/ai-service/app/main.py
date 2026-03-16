@@ -9,16 +9,17 @@ Gestisce:
 Comunica con l'inventory-service per recuperare i prodotti.
 Non accede direttamente al DB: tutto passa via HTTP inter-servizio.
 """
+
 import logging
 
 from fastapi import FastAPI
 
+from . import schemas
 from .aiagents import (
     create_categorization_products_agent,
     create_receipe_agent,
     get_response_chat,
 )
-from . import schemas
 from .services.product_client import ProductServiceClient
 
 # Logging strutturato
@@ -70,4 +71,3 @@ async def get_categorized_products():
 async def chat(req: schemas.AIChatRequest):
     """Chat libera con l'assistente AI."""
     return await get_response_chat(req.request)
-

@@ -1,29 +1,37 @@
-from pydantic import BaseModel, SecretStr, EmailStr
+from pydantic import BaseModel, EmailStr, SecretStr
+
 
 class UserCreate(BaseModel):
     username: str
     password: str
-    
+
+
 class UserHashedCreate(BaseModel):
     username: str
     hashed_password: str
-    
+
+
 class UserResponse(BaseModel):
     id: int
     username: str
+
     class Config:
         from_attributes = True
-        
+
+
 class UserUpdate(BaseModel):
-    id: int 
+    id: int
     username: str | None = None
     password: str | None = None
+
 
 class UserLogin(BaseModel):
     username: str
     password: str
-    
+
+
 class UserWithToken(BaseModel):
     """Risposta OAuth2-compatibile con il JWT."""
+
     access_token: str
     token_type: str = "bearer"

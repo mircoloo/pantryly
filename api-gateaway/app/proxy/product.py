@@ -10,16 +10,16 @@ Vantaggi rispetto al catch-all generico `/{path:path}`:
   - Validazione esplicita dei parametri (es. product_id: int).
   - Più facile aggiungere rate-limiting o cache per singola rotta.
 """
+
 import logging
 from typing import List, Optional
 
 import httpx
-from fastapi import APIRouter, Depends, Response, status
-from pydantic import BaseModel
-
+from app import schemas
 from app.core.config import settings
 from app.core.security import get_current_user
-from app import schemas
+from fastapi import APIRouter, Depends, Response, status
+from pydantic import BaseModel
 
 logger = logging.getLogger("gateway.products")
 
@@ -71,7 +71,9 @@ async def list_products(user: dict = Depends(get_current_user)):
     return await _forward_to_inventory("GET", "/v1/products", user)
 
 
-@router.post("", response_model=schemas.ProductShow, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "", response_model=schemas.ProductShow, status_code=status.HTTP_201_CREATED
+)
 async def create_product(
     body: schemas.ProductCreate,
     user: dict = Depends(get_current_user),
