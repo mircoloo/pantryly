@@ -9,15 +9,16 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
-from app.repository import ProductRepository
-from app.service import ProductService
-from app import repository, schemas
+from app.repositories import repository
+from app.repositories.repository import ProductRepository
+from app.services.service import ProductService
+from app.schemas import schemas
 from app.core.database import get_db
 
 router = APIRouter(tags=["Products"], prefix="/v1/products")
 
-def get_product_service(db: Session = Depends(get_db)):
-    repo = ProductRepository(db)
+def get_product_service(db: Session = Depends(get_db)) -> ProductService:
+    repo: ProductRepository = ProductRepository(db)
     return ProductService(repo)
 
 def _get_user_id(x_user_id: str = Header(...)) -> int:

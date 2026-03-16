@@ -47,7 +47,7 @@ def override_user_id():
     return 1  
 
 @pytest.fixture
-def client(db):  # db fixture vista prima
+def client(db):  
     app.dependency_overrides[get_db] = lambda: db
     app.dependency_overrides[_get_user_id] = override_user_id
 

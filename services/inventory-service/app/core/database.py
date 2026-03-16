@@ -1,12 +1,7 @@
-"""
-Configurazione database per l'inventory-service.
-
-In sviluppo usa SQLite; in produzione basta cambiare DATABASE_URL
-nel file .env per puntare a PostgreSQL/MySQL.
-"""
 from app.core.config import config  
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
+
 
 DATABASE_URL = config.DATABASE_URL
 
@@ -33,7 +28,7 @@ def get_db():
     Dependency FastAPI che fornisce una sessione DB per ogni request.
     La sessione viene chiusa automaticamente al termine della request.
     """
-    db = LocalSession()
+    db: Session = LocalSession()
     try:
         yield db
     finally:

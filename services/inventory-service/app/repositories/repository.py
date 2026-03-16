@@ -5,12 +5,14 @@ Accesso diretto al DB – nessuna logica di business qui.
 Tutte le query sono filtrate per user_id (multi-tenancy):
 l'utente vede e gestisce solo i propri prodotti.
 """
+
 from sqlalchemy.orm import Session
-from app import models, schemas
+from app.schemas import schemas
+from app.models import models
 
 class ProductRepository:
     def __init__(self, db: Session):
-        self.db = db
+        self.db: Session = db
 
     def create_product(self, request: schemas.ProductCreate, user_id: int) -> models.Product:
         """ Crea un nuovo prodotto associato all'utente. Solleva 400 se nome o barcode già esistono per l'utente. """

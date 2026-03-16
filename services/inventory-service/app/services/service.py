@@ -1,6 +1,6 @@
 
-from app.repository import ProductRepository
-from app.schemas import ProductCreate, ProductShow
+from app.repositories.repository import ProductRepository
+from app.schemas.schemas import ProductCreate, ProductShow
 from fastapi import status, HTTPException
 
 
@@ -9,9 +9,10 @@ class ProductService():
         self.repo: ProductRepository = repo
 
     def create_product(self, request: ProductCreate, user_id: int) -> ProductShow:
-        print(f"{request=}")
+        """
+        create the product into the database if not found, otherwise it raises 400 BAD REQUEST exception
+        """
         existing_by_barcode = self.repo.get_product_by_barcode(request.barcode, user_id) 
-        print(f"{existing_by_barcode}")
         if existing_by_barcode:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
