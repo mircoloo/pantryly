@@ -49,5 +49,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
         if user_id is None:
             raise credentials_exception
         return payload
-    except JWTError:
-        raise credentials_exception
+    except JWTError as exc:
+        raise credentials_exception from exc
+    
