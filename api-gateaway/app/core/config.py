@@ -5,6 +5,7 @@ Usa pydantic-settings per caricare le variabili d'ambiente dal file .env.
 Ogni variabile ha un default sicuro; in produzione va sovrascritta via env
 o tramite il file .env nella root del servizio.
 """
+
 from pydantic_settings import BaseSettings
 
 
@@ -27,4 +28,3 @@ class Settings(BaseSettings):
 
 # Istanza singleton importata da tutti i moduli del gateway
 settings = Settings()
-

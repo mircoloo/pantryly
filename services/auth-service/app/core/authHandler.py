@@ -9,11 +9,11 @@ Il claim standard 'sub' (subject) contiene l'id dell'utente,
 in linea con le specifiche JWT (RFC 7519) e con la validazione
 effettuata dal Gateway.
 """
+
 from datetime import datetime, timedelta, timezone
 
-from jose import ExpiredSignatureError, JWTError, jwt
-
 from app.core.config import config
+from jose import ExpiredSignatureError, JWTError, jwt
 
 # Configurazione JWT caricata dalle variabili d'ambiente
 JWT_SECRET = config.JWT_SECRET
@@ -31,9 +31,7 @@ class AuthHandler:
 
         Il token scade dopo JWT_EXPIRATION_TIME minuti.
         """
-        expiration = datetime.now(timezone.utc) + timedelta(
-            minutes=JWT_EXPIRATION_TIME
-        )
+        expiration = datetime.now(timezone.utc) + timedelta(minutes=JWT_EXPIRATION_TIME)
         payload = {
             # 'sub' è il claim standard per identificare il soggetto del token
             "sub": str(user_id),
@@ -58,4 +56,3 @@ class AuthHandler:
             return {"error": "Token has expired"}
         except JWTError:
             return {"error": "Invalid token"}
-        

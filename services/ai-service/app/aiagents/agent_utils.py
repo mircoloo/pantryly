@@ -6,7 +6,9 @@ Configura il client OpenAI SDK puntando alle API di Google Gemini
 
 La chiave API viene caricata dalla variabile d'ambiente GOOGLE_API_KEY.
 """
+
 import os
+
 from app.core.config import config
 from dotenv import load_dotenv
 from openai import OpenAI

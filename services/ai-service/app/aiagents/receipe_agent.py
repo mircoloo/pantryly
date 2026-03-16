@@ -4,6 +4,7 @@ Agente AI per la generazione di ricette.
 Riceve la lista di prodotti/ingredienti dall'inventario
 e genera suggerimenti di ricette usando Gemini.
 """
+
 import json
 from typing import List
 

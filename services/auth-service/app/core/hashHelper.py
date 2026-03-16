@@ -5,7 +5,8 @@ Regole di sicurezza:
   - Non loggare MAI password in chiaro o hash nei log.
   - Usare sempre bcrypt (adaptive hashing) per resistenza al brute-force.
 """
-from bcrypt import checkpw, hashpw, gensalt
+
+from bcrypt import checkpw, gensalt, hashpw
 
 
 class HashHelper:

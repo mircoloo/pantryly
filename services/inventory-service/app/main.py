@@ -5,12 +5,15 @@ Gestisce:
   - CRUD prodotti (nome, barcode, scadenza)
   - Consultazione inventario
 """
+
 import logging
+
 from dotenv import load_dotenv
+
 load_dotenv()
-from fastapi import FastAPI, status
-from app.core.database import create_db_and_tables
 from app.api.v1 import products
+from app.core.database import create_db_and_tables
+from fastapi import FastAPI, status
 
 # Logging strutturato
 logging.basicConfig(

@@ -4,13 +4,14 @@ Modello SQLAlchemy per i prodotti.
 Ogni prodotto è associato a un utente tramite user_id.
 L'utente può vedere e gestire solo i propri prodotti (multi-tenancy).
 """
-from sqlalchemy import Column, Date, Integer, String
 
 from app.core.database import Base
+from sqlalchemy import Column, Date, Integer, String
 
 
 class Product(Base):
     """Rappresenta un prodotto nell'inventario di un utente."""
+
     __tablename__ = "products"
 
     id: int = Column(Integer, primary_key=True, index=True)

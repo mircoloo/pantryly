@@ -9,17 +9,16 @@ Flusso tipico:
   Client ──POST /auth/login──▶ Gateway ──POST /v1/auth/login──▶ auth-service
                                  ◀── { token: "..." } ◀──────────────────────
 """
+
 import logging
 from typing import Optional
 
 import httpx
-from fastapi import APIRouter, Response
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import Depends
-from pydantic import BaseModel
-
-from app.core.config import settings
 from app import schemas
+from app.core.config import settings
+from fastapi import APIRouter, Depends, Response
+from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 
 logger = logging.getLogger("gateway.auth")
 
