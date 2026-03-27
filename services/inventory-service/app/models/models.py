@@ -10,7 +10,7 @@ from sqlalchemy import Column, Date, Integer, String
 
 
 class Product(Base):
-    """Rappresenta un prodotto nell'inventario di un utente."""
+    """Product model for ORM."""
 
     __tablename__ = "products"
 
