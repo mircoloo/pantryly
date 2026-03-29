@@ -34,7 +34,7 @@ app = FastAPI(
 @app.get("/", status_code=status.HTTP_200_OK, tags=["Health"])
 def health_check():
     """Endpoint di health-check."""
-    return {"status": "ok"}
+    return {"status": "OK"}
 
 
 app.include_router(products.router)
