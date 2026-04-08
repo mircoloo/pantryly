@@ -1,11 +1,3 @@
-"""
-Flussi supportati:
-  - POST   /v1/products       → crea un prodotto (per l'utente autenticato)
-  - GET    /v1/products       → elenca i prodotti dell'utente
-  - GET    /v1/products/{id}  → dettaglio prodotto (solo se dell'utente)
-  - DELETE /v1/products/{id}  → elimina un prodotto (solo se dell'utente)
-"""
-
 from typing import List
 
 from app.core.database import get_db
