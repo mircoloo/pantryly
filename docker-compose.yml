@@ -1,16 +1,59 @@
 services:
-  inventory_service:
-    build: ./inventory-service
-    container_name: inventory
-    ports: 
-      - 8001:8000
-    env_file:
-      - ./inventory-service/.env
 
-  ai_service:
-    build: ./ai-service
-    container_name: receipe_ai
+  # ── API Gateway ──────────────────────────────────────────────────
+  # Punto di ingresso unico: valida JWT e inoltra le richieste
+  api-gateway:
+    build: ./api-gateaway
+    container_name: api-gateway
     ports:
-      - 8002:8000
+      - "8080:8000"          # Unica porta esposta al client
     env_file:
-      - ./ai-service/.env
+      - ./api-gateaway/.env
+    depends_on:
+      - auth-service
+      - inventory-service
+      - ai-service
+    networks:
+      - pantryly-net
+    restart: unless-stopped
+
+  # ── Auth Service ─────────────────────────────────────────────────
+  # Registrazione utenti + login + generazione JWT
+  auth-service:
+    build: ./services/auth-service
+    container_name: auth-service
+    env_file:
+      - ./services/auth-service/.env
+    networks:
+      - pantryly-net
+    restart: unless-stopped
+    # Nessuna porta esposta: accessibile solo dal gateway via rete interna
+
+  # ── Inventory Service ────────────────────────────────────────────
+  # CRUD prodotti (nome, barcode, scadenza)
+  inventory-service:
+    build: ./services/inventory-service
+    container_name: inventory-service
+    env_file:
+      - ./services/inventory-service/.env
+    networks:
+      - pantryly-net
+    restart: unless-stopped
+
+  # ── AI Service ───────────────────────────────────────────────────
+  # Generazione ricette, categorizzazione prodotti, chat AI
+  ai-service:
+    build: ./services/ai-service
+    container_name: ai-service
+    env_file:
+      - ./services/ai-service/.env
+    networks:
+      - pantryly-net
+    restart: unless-stopped
+
+# ── Rete interna ────────────────────────────────────────────────────
+# Tutti i container condividono questa rete; si raggiungono
+# per nome servizio (es. http://auth-service:8000)
+networks:
+  pantryly-net:
+    driver: bridge
