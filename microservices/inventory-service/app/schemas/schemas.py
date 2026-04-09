@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ProductCreate(BaseModel):
@@ -18,5 +18,4 @@ class ProductShow(BaseModel):
     barcode: str
     expiration_date: Optional[date] = None
 
-    class ConfigDict:
-        from_attributes = True  # ORM support → Pydantic
+    model_config = ConfigDict(from_attributes=True)

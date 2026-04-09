@@ -4,8 +4,9 @@ from app.core.database import get_db
 from app.repositories.repository import ProductRepository
 from app.schemas import schemas
 from app.services.service import ProductService
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
+
 
 router = APIRouter(tags=["Products"], prefix="/v1/products")
 
@@ -45,7 +46,12 @@ def get_product_by_id(
     user_id: int,
     service: ProductService = Depends(get_product_service),
 ):
-    return service.get_product_by_id(product_id=product_id, user_id=user_id)
+    
+    product = service.get_product_by_id(product_id=product_id, user_id=user_id)
+    if not product:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
+            )
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)

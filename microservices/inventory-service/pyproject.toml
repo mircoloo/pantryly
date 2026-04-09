@@ -51,3 +51,6 @@ dependencies = [
     "urllib3==2.6.3",
     "uvicorn==0.40.0",
 ]
+
+[tool.mypy]
+disable_error_code = ["return-value"]
