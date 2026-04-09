@@ -3,9 +3,6 @@
 *__pycache__*
 *.db
 .swp
-<<<<<<< HEAD
-=======
-
+.vscode*
 .mypy*
 .ruff*
->>>>>>> 2c94cf3814b352e18271a0d7b9f24eaac72e680b
