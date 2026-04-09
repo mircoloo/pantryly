@@ -16,11 +16,11 @@ class ProductRepository:
         self.db: Session = db
 
     def create_product(
-        self, request: schemas.ProductCreate, user_id: int
+        self, request: schemas.ProductCreate
     ) -> models.Product:
         """Crea un nuovo prodotto associato all'utente. Solleva 400 se nome o barcode già esistono per l'utente."""
         new_product = models.Product(
-            user_id=user_id,
+            user_id=request.user_id,
             name=request.name,
             expiration_date=request.expiration_date,
             barcode=request.barcode,
@@ -37,7 +37,7 @@ class ProductRepository:
             .all()
         )
 
-    def get_product_by_id(self, id: int, user_id: int) -> models.Product:
+    def get_product_by_id(self, id: int, user_id: int) -> models.Product | None:
         product = (
             self.db.query(models.Product)
             .filter(

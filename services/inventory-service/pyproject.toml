@@ -3,7 +3,7 @@ name = "inventory-service"
 version = "0.0.0"
 description = "Inventory service, where you can add/remove/modify and get products"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = [
     "annotated-doc==0.0.4",
     "annotated-types==0.7.0",

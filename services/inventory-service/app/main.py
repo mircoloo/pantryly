@@ -1,42 +1,34 @@
-"""
-Inventory Service – Microservizio per la gestione dei prodotti Pantryly.
-
-Gestisce:
-  - CRUD prodotti (nome, barcode, scadenza)
-  - Consultazione inventario
-"""
-
-import logging
-
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 
-load_dotenv()
-from app.api.v1 import products
-from app.core.database import create_db_and_tables
+import os
+
+import time
+
 from fastapi import FastAPI, status
 
-# Logging strutturato
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s – %(message)s",
-)
-logger = logging.getLogger("inventory")
+from app.core.config import config
+from app.core.database import create_db_and_tables
+from app.api.v1 import products
 
-# Creazione tabelle al primo avvio
-create_db_and_tables()
+from pathlib import Path
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+    # e.g. close connections, cleanup
+
 
 app = FastAPI(
     title="Pantryly Inventory Service",
-    version="1.0.0",
+    version="0.0.0",
+    lifespan=lifespan,
 )
 
-
 @app.get("/", status_code=status.HTTP_200_OK, tags=["Health"])
-def health_check():
-    """Endpoint di health-check."""
-    return {"status": "OK"}
+async def health_check():
+    return {"status": "UP"}
 
 
 app.include_router(products.router)
-
-logger.info("Inventory service avviato")

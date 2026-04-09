@@ -1,14 +1,14 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from pathlib import Path
 
+WORK_DIR = Path(__file__).parent.parent.parent / ".env"
 class Config(BaseSettings):
-
-    # ── Database ─────────────────────────────────────────────────────
     DATABASE_URL: str = ""
 
-    class ConfigDict:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=WORK_DIR)
+    
 
 
-# Istanza singleton importata da tutti i moduli
 config = Config()
+    
