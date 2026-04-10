@@ -1,10 +1,9 @@
 import pytest
-from app.api.v1.products import _get_user_id
 from app.core.database import Base, get_db
 from app.main import app
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 
 SQLALCHEMY_DATABASE_URL = "sqlite://"
@@ -43,15 +42,15 @@ def db():
     connection.close()
 
 
-def override_user_id():
-    return 1
-
 
 @pytest.fixture
-def client(db):
-    app.dependency_overrides[get_db] = lambda: db
-    app.dependency_overrides[_get_user_id] = override_user_id
+def get_test_user_id() -> int:
+    return 1
 
+@pytest.fixture
+def client(db: Session):
+    app.dependency_overrides[get_db] = lambda: db
+    
     with TestClient(app) as c:
         yield c
 

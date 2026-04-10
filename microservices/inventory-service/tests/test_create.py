@@ -5,6 +5,7 @@ def test_create_product_correct(client):
         "/v1/products",
         json={
             "name": "Test Product",
+            "user_id": 1,
             "barcode": "123456789012",
             "expiration_date": "2025-12-31",
         },
@@ -14,11 +15,12 @@ def test_create_product_correct(client):
     assert response.json()["name"] == "Test Product"
 
 
-def test_create_same_name_product_exists(client):
+def test_create_same_name_product_exists(client,get_test_user_id):
     client.post(
         "/v1/products",
         json={
             "name": "Test Product",
+            "user_id": get_test_user_id,
             "barcode": "123",
             "expiration_date": "2025-12-31",
         },
@@ -27,6 +29,7 @@ def test_create_same_name_product_exists(client):
         "/v1/products",
         json={
             "name": "Test Product",
+            "user_id": get_test_user_id,
             "barcode": "1234",
             "expiration_date": "2025-12-31",
         },
@@ -38,11 +41,12 @@ def test_create_same_name_product_exists(client):
     )
 
 
-def test_create_same_barcode_product_exists(client):
+def test_create_same_barcode_product_exists(client, get_test_user_id):
     client.post(
         "/v1/products",
         json={
             "name": "Test Product 1",
+            "user_id": get_test_user_id,
             "barcode": "123",
             "expiration_date": "2025-12-31",
         },
@@ -51,6 +55,7 @@ def test_create_same_barcode_product_exists(client):
         "/v1/products",
         json={
             "name": "Test Product 2",
+            "user_id": get_test_user_id,
             "barcode": "123",
             "expiration_date": "2025-12-31",
         },
@@ -60,11 +65,12 @@ def test_create_same_barcode_product_exists(client):
     assert response_2.json()["detail"] == "Product with barcode 123 already exists"
 
 
-def test_get_all_products(client):
+def test_get_all_products(client, get_test_user_id):
     client.post(
         "/v1/products",
         json={
             "name": "Test Product 1",
+            "user_id": get_test_user_id,
             "barcode": "123",
             "expiration_date": "2025-12-31",
         },
@@ -73,28 +79,40 @@ def test_get_all_products(client):
         "/v1/products",
         json={
             "name": "Test Product 2",
+            "user_id": get_test_user_id,
             "barcode": "1234",
             "expiration_date": "2025-12-31",
         },
     )
-    res = client.get("/v1/products")
-    assert len(res.json()) == 2
+    client.post(
+        "/v1/products",
+        json={
+            "name": "Test Product 3",
+            "user_id": get_test_user_id,
+            "barcode": "12345",
+            "expiration_date": "2025-12-31",
+        },
+    )
+    res = client.get(f"/v1/products?user_id={get_test_user_id}")
+    print(res.json())
+    assert len(res.json()) == 3
 
 
-def test_delete_product(client):
+def test_delete_product(client, get_test_user_id):
     response_1 = client.post(
         "/v1/products",
         json={
             "name": "Test Product 1",
+            "user_id": get_test_user_id,
             "barcode": "123",
             "expiration_date": "2025-12-31",
         },
     )
     assert response_1.status_code == 201
-    delete_response = client.delete("/v1/products/1")
+    delete_response = client.delete(f"/v1/products/1?user_id={get_test_user_id}")
     assert delete_response.status_code == 204
 
 
-def test_delete_product_doesnt_exists(client):
-    delete_response = client.delete("/v1/products/1")
-    assert delete_response.status_code == 400
+def test_delete_product_doesnt_exists(client, get_test_user_id):
+    delete_response = client.delete(f"/v1/products/1?user_id={get_test_user_id}")
+    assert delete_response.status_code == 404

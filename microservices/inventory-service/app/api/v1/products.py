@@ -58,7 +58,7 @@ def create_product(
 @router.get(
     "", response_model=List[schemas.ProductShow], status_code=status.HTTP_200_OK
 )
-def list_products(
+def list_products_for_user(
     user_id: int,
     service: ProductService = Depends(get_product_service),
 ):
@@ -115,7 +115,7 @@ def get_product_by_id(
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(
+def delete_product_for_user(
     product_id: int,
     user_id: int,
     service: ProductService = Depends(get_product_service),
