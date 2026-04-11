@@ -1,1 +1,3 @@
-from .schemas import __all__
+from .schemas import ProductCreate, ProductShow
+
+__all__ = ["ProductCreate", "ProductShow"]
