@@ -64,6 +64,7 @@ def list_products_for_user(
 
 @router.get(
     "/by-name/{product_name}",
+    name="product_by_name",
     response_model=schemas.ProductShow,
     status_code=status.HTTP_200_OK,
 )
