@@ -1,4 +1,4 @@
-
+from fastapi import status
 
 def test_create_product_correct(client):
     response = client.post(
@@ -11,7 +11,7 @@ def test_create_product_correct(client):
         },
     )
 
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
     assert response.json()["name"] == "Test Product"
 
 
@@ -35,7 +35,7 @@ def test_create_same_name_product_exists(client,get_test_user_id):
         },
     )
 
-    assert response_2.status_code == 400
+    assert response_2.status_code == status.HTTP_400_BAD_REQUEST
     assert (
         response_2.json()["detail"] == "Product with name Test Product already exists"
     )
@@ -61,7 +61,7 @@ def test_create_same_barcode_product_exists(client, get_test_user_id):
         },
     )
 
-    assert response_2.status_code == 400
+    assert response_2.status_code == status.HTTP_400_BAD_REQUEST
     assert response_2.json()["detail"] == "Product with barcode 123 already exists"
 
 
@@ -108,11 +108,11 @@ def test_delete_product(client, get_test_user_id):
             "expiration_date": "2025-12-31",
         },
     )
-    assert response_1.status_code == 201
+    assert response_1.status_code == status.HTTP_201_CREATED
     delete_response = client.delete(f"/v1/products/1?user_id={get_test_user_id}")
-    assert delete_response.status_code == 204
+    assert delete_response.status_code == status.HTTP_204_NO_CONTENT
 
 
 def test_delete_product_doesnt_exists(client, get_test_user_id):
     delete_response = client.delete(f"/v1/products/1?user_id={get_test_user_id}")
-    assert delete_response.status_code == 404
+    assert delete_response.status_code == status.HTTP_404_NOT_FOUND
