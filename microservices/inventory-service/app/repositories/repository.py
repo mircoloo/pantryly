@@ -7,7 +7,7 @@ l'utente vede e gestisce solo i propri prodotti.
 """
 
 from app.models import Product
-from app.schemas import ProductCreate, ProductShow
+from app.schemas import ProductCreate
 from sqlalchemy.orm import Session
 
 

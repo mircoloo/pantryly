@@ -1,16 +1,14 @@
 from contextlib import asynccontextmanager
+from fastapi import FastAPI
 
-import os
 
-import time
 
-from fastapi import FastAPI, status
 
-from app.core.config import config
+from fastapi import status
+
 from app.core.database import create_db_and_tables
 from app.api.v1 import products
 
-from pathlib import Path
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
