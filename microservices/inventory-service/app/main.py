@@ -30,7 +30,7 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-@app.get("/items/{user_id}", response_class=HTMLResponse)
+@app.get("/products/{user_id}", response_class=HTMLResponse)
 async def read_posts(request: Request, user_id: int):
     
     async with httpx.AsyncClient() as client:
