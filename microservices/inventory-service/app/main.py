@@ -9,6 +9,9 @@ from fastapi.templating import Jinja2Templates
 from app.api.v1 import products
 from app.core.database import create_db_and_tables
 
+import httpx
+import requests
+
 BASE_DIR = Path(__file__).resolve().parent
 
 @asynccontextmanager
@@ -27,10 +30,15 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-@app.get("/items/{id}", response_class=HTMLResponse)
-async def read_item(request: Request, id: str):
+@app.get("/items/{user_id}", response_class=HTMLResponse)
+async def read_posts(request: Request, user_id: int):
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"http://localhost:8000/v1/products?user_id={user_id}")
+        posts = response.json()
+        
     return templates.TemplateResponse(
-        request=request, name="item.html", context={"id": id}
+        request=request, name="item.html", context={"posts": posts}
     )
 
 @app.get("/", status_code=status.HTTP_200_OK, tags=["Health"])
