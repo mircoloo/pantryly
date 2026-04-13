@@ -15,11 +15,8 @@ import logging
 from fastapi import FastAPI
 
 from . import schemas
-from .aiagents import (
-    create_categorization_products_agent,
-    create_receipe_agent,
-    get_response_chat,
-)
+from .aiagents import (create_categorization_products_agent,
+                       create_receipe_agent, get_response_chat)
 from .services.product_client import ProductServiceClient
 
 # Logging strutturato

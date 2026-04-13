@@ -1,16 +1,14 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import httpx
+import requests
+from app.api.v1 import products
+from app.core.database import create_db_and_tables
 from fastapi import FastAPI, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-from app.api.v1 import products
-from app.core.database import create_db_and_tables
-
-import httpx
-import requests
 
 BASE_DIR = Path(__file__).resolve().parent
 

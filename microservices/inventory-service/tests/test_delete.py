@@ -1,5 +1,6 @@
 from fastapi import status
 
+
 def test_delete_product(client, get_test_user_id):
     response_1 = client.post(
         "/v1/products",

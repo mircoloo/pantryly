@@ -6,10 +6,9 @@ Tutte le query sono filtrate per user_id (multi-tenancy):
 l'utente vede e gestisce solo i propri prodotti.
 """
 
-from sqlalchemy.orm import Session
-
 from app.models import Product
 from app.schemas import ProductCreate
+from sqlalchemy.orm import Session
 
 
 class ProductRepository:

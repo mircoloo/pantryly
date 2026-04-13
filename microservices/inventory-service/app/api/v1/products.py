@@ -1,13 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
 from app.core.database import get_db
 from app.repositories.repository import ProductRepository
 from app.schemas import schemas
 from app.services.service import (ProductAlreadyExistsError,
                                   ProductNotFoundError, ProductService)
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
 router = APIRouter(tags=["Products"], prefix="/v1/products")
 

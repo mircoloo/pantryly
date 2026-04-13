@@ -1,5 +1,6 @@
 from fastapi import status
 
+
 def test_create_product_correct(client):
     response = client.post(
         "/v1/products",

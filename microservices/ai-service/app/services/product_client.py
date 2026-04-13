@@ -12,7 +12,6 @@ from typing import List
 import httpx
 from app.core.config import config
 
-
 logger = logging.getLogger(__name__)
 
 # URL dell'inventory-service (risolto via Docker network in produzione)
