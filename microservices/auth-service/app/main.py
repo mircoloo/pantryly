@@ -9,10 +9,11 @@ Gestisce:
 
 import logging
 
+from fastapi import FastAPI
+
 from app.api.v1 import auth, user
 from app.core.database import create_db_and_tables
 from app.core.logger import setup_logging
-from fastapi import FastAPI
 
 # Configurazione logging prima di qualsiasi altra operazione
 setup_logging()

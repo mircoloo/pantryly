@@ -5,9 +5,10 @@ Accesso diretto al DB – nessuna logica di business qui.
 La logica di business sta in UserService.
 """
 
+from sqlalchemy.orm import Session
+
 from app.models.user import User
 from app.schemas.user import UserHashedCreate
-from sqlalchemy.orm import Session
 
 
 class UserRepository:

@@ -7,13 +7,14 @@ senza contenere logica di accesso diretto al DB.
 
 import logging
 
+from fastapi import HTTPException, status
+
 from app.core.authHandler import AuthHandler
 from app.core.hashHelper import HashHelper
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import (UserCreate, UserHashedCreate, UserLogin,
                               UserWithToken)
-from fastapi import HTTPException, status
 
 logger = logging.getLogger(__name__)
 

@@ -12,8 +12,9 @@ effettuata dal Gateway.
 
 from datetime import datetime, timedelta, timezone
 
-from app.core.config import config
 from jose import ExpiredSignatureError, JWTError, jwt
+
+from app.core.config import config
 
 # Configurazione JWT caricata dalle variabili d'ambiente
 JWT_SECRET = config.JWT_SECRET

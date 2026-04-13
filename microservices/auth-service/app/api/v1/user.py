@@ -5,12 +5,13 @@ La registrazione (POST /v1/users) è esposta anche dal Gateway
 tramite il proxy /auth/register.
 """
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
 from app.core.database import get_db
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserResponse
 from app.services.user_service import UserService
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 
 router = APIRouter(
     prefix="/v1/users",
