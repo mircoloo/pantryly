@@ -10,7 +10,7 @@ class ProductBase(BaseModel):
     expiration_date: Optional[date] = None
 
 class ProductCreate(ProductBase):
-    user_id: int
+    pass
 
 
 

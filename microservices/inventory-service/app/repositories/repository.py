@@ -6,9 +6,10 @@ Tutte le query sono filtrate per user_id (multi-tenancy):
 l'utente vede e gestisce solo i propri prodotti.
 """
 
+from sqlalchemy.orm import Session
+
 from app.models import Product
 from app.schemas import ProductCreate
-from sqlalchemy.orm import Session
 
 
 class ProductRepository:
@@ -16,11 +17,11 @@ class ProductRepository:
         self.db: Session = db
 
     def create_product(
-        self, request: ProductCreate
+        self, request: ProductCreate, user_id: int
     ) -> Product:
         """Crea un nuovo prodotto associato all'utente. Solleva 400 se nome o barcode già esistono per l'utente."""
         new_product = Product(
-            user_id=request.user_id,
+            user_id=user_id,
             name=request.name,
             expiration_date=request.expiration_date,
             barcode=request.barcode,

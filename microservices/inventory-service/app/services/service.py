@@ -17,14 +17,14 @@ class ProductService:
     def __init__(self, repo: ProductRepository):
         self.repo: ProductRepository = repo
 
-    def create_product(self, request: ProductCreate) -> ProductShow:
-        existing_by_barcode = self.repo.get_product_by_barcode(request.barcode, request.user_id)
+    def create_product(self, request: ProductCreate, user_id: int) -> ProductShow:
+        existing_by_barcode = self.repo.get_product_by_barcode(request.barcode, user_id)
         if existing_by_barcode:
             raise ProductAlreadyExistsError("barcode", request.barcode)
-        existing_by_name = self.repo.get_product_by_name(request.name, request.user_id)
+        existing_by_name = self.repo.get_product_by_name(request.name, user_id)
         if existing_by_name:
             raise ProductAlreadyExistsError("name", request.name)
-        return ProductShow.model_validate(self.repo.create_product(request))
+        return ProductShow.model_validate(self.repo.create_product(request, user_id))
 
     def get_all_products(self, user_id: int) -> list[ProductShow]:
         products = self.repo.get_products(user_id=user_id)
