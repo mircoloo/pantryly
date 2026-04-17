@@ -1,9 +1,9 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserCreate(BaseModel):
-    username: str
-    password: str
+    username: str = Field(min_length=8)
+    password: str = Field(min_length=8)
 
 
 class UserHashedCreate(BaseModel):
@@ -29,8 +29,6 @@ class UserLogin(BaseModel):
     password: str
 
 
-class UserWithToken(BaseModel):
-    """Risposta OAuth2-compatibile con il JWT."""
-
+class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"

@@ -6,7 +6,6 @@ from app.schemas.user import UserHashedCreate
 
 
 class UserRepository:
-    """Pattern Repository: incapsula tutte le query sulla tabella users."""
 
     def __init__(self, db: Session):
         self.db = db

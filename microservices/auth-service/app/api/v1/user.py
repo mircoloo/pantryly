@@ -8,6 +8,8 @@ tramite il proxy /auth/register.
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+
+from app.services.user_service import UserAlreadyExistsError
 from app.core.database import get_db
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserResponse
@@ -20,15 +22,27 @@ router = APIRouter(
 
 
 def get_user_service(db: Session = Depends(get_db)):
-    """Factory dependency: crea UserService con il repository iniettato."""
     repo = UserRepository(db)
     return UserService(repo)
 
 
+def _to_http_exception(exc: Exception) -> HTTPException:
+    if isinstance(exc, UserAlreadyExistsError):
+        return HTTPException(
+                 status_code=status.HTTP_400_BAD_REQUEST,
+                 detail="Username already exists",
+             )
+    return HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail="Unexpected server error",
+    )
+
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, service: UserService = Depends(get_user_service)):
-    """Registra un nuovo utente."""
-    return service.create_user(user)
+    try:
+        return service.create_user(user)
+    except UserAlreadyExistsError as exc:
+        raise _to_http_exception(exc) from exc
 
 
 @router.get("/{user_id}", response_model=UserResponse)

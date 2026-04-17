@@ -1,6 +1,9 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.models import Product
+from app.schemas import ProductCreate
+
 from app import models
 from app.schemas import ProductCreate
 class ProductRepository:
@@ -8,10 +11,11 @@ class ProductRepository:
         self.db: Session = db
 
     def create_product(
-        self, request: ProductCreate
-    ) -> models.Product:
-        new_product = models.Product(
-            user_id=request.user_id,
+        self, request: ProductCreate, user_id: int
+    ) -> Product:
+        """Crea un nuovo prodotto associato all'utente. Solleva 400 se nome o barcode già esistono per l'utente."""
+        new_product = Product(
+            user_id=user_id,
             name=request.name,
             expiration_date=request.expiration_date,
             barcode=request.barcode,

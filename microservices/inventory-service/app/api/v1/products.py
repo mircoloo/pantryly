@@ -1,16 +1,13 @@
 from typing import Annotated, List
 
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from sqlalchemy.orm import Session
+
 from app.core.database import get_db
 from app.repositories.repository import ProductRepository
 from app.schemas import schemas
-
-from app.services.service import (
-    ProductAlreadyExistsError,
-    ProductNotFoundError,
-    ProductService,
-)
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from app.services.service import (ProductAlreadyExistsError,
+                                  ProductNotFoundError, ProductService)
 
 router = APIRouter(tags=["Products"], prefix="/v1")
 
@@ -47,10 +44,12 @@ def _to_http_exception(exc: Exception) -> HTTPException:
 )
 def create_product(
     request: schemas.ProductCreate,
-    service: Annotated[ProductService, Depends(get_product_service)]
+     x_user_id: Annotated[int, Header()],
+    service: ProductService = Depends(get_product_service),
+    
 ):
     try:
-        return service.create_product(request)
+        return service.create_product(request, user_id=x_user_id)
     except ProductAlreadyExistsError as exc:
         raise _to_http_exception(exc) from exc
 
@@ -59,10 +58,10 @@ def create_product(
     "/users/{user_id}/products", response_model=List[schemas.ProductShow], status_code=status.HTTP_200_OK
 )
 def list_products_for_user(
-    user_id: int,
+     x_user_id: Annotated[int, Header()],
     service: ProductService = Depends(get_product_service),
 ):
-    return service.get_all_products(user_id)
+    return service.get_all_products(user_id=x_user_id)
 
 
 @router.get(
@@ -73,11 +72,11 @@ def list_products_for_user(
 )
 def get_product_by_name(
     product_name: str,
-    user_id: int,
+    x_user_id: Annotated[int, Header()],
     service: ProductService = Depends(get_product_service),
 ):
     try:
-        return service.get_product_by_name(user_id=user_id, product_name=product_name)
+        return service.get_product_by_name(user_id=x_user_id, product_name=product_name)
     except ProductNotFoundError as exc:
         raise _to_http_exception(exc) from exc
 
@@ -89,12 +88,12 @@ def get_product_by_name(
 )
 def get_product_by_barcode(
     product_barcode: str,
-    user_id: int,
+    x_user_id: Annotated[int, Header()],
     service: ProductService = Depends(get_product_service),
 ):
     try:
         return service.get_product_by_barcode(
-            user_id=user_id,
+            user_id=x_user_id,
             product_barcode=product_barcode,
         )
     except ProductNotFoundError as exc:
@@ -106,11 +105,11 @@ def get_product_by_barcode(
 )
 def get_product_by_id(
     product_id: int,
-    user_id: int,
+    x_user_id: Annotated[int, Header()],
     service: ProductService = Depends(get_product_service),
 ):
     try:
-        return service.get_product_by_id(product_id=product_id, user_id=user_id)
+        return service.get_product_by_id(product_id=product_id, user_id=x_user_id)
     except ProductNotFoundError as exc:
         raise _to_http_exception(exc) from exc
 
@@ -118,10 +117,10 @@ def get_product_by_id(
 @router.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product_for_user(
     product_id: int,
-    user_id: int,
+    x_user_id: Annotated[int, Header()],
     service: ProductService = Depends(get_product_service),
 ):
     try:
-        service.delete_product_by_id(user_id, product_id)
+        service.delete_product_by_id(x_user_id, product_id)
     except ProductNotFoundError as exc:
         raise _to_http_exception(exc) from exc

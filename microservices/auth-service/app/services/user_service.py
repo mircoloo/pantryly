@@ -1,12 +1,6 @@
-"""
-Logica di business per la gestione utenti.
 
-Questo servizio orchestra repository, hashing e JWT
-senza contenere logica di accesso diretto al DB.
-"""
 
 import logging
-
 from fastapi import HTTPException, status
 
 from app.core.authHandler import AuthHandler
@@ -18,9 +12,11 @@ from app.schemas.user import (UserCreate, UserHashedCreate, UserLogin,
 
 logger = logging.getLogger(__name__)
 
-
+class UserAlreadyExistsError(Exception):
+    def __init__(self, username: str):
+        self.username = username
+        super().__init__(username)
 class UserService:
-    """Servizio applicativo per operazioni CRUD e login utenti."""
 
     def __init__(self, repo: UserRepository):
         self.repo = repo
@@ -30,11 +26,7 @@ class UserService:
         """Registra un nuovo utente dopo aver verificato che lo username sia unico."""
         existing = self.repo.get_by_username(user_data.username)
         if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username already exists",
-            )
-
+            raise UserAlreadyExistsError(username=user_data.username)
         hashed_password = HashHelper.get_password_hash(user_data.password)
         user_hashed = UserHashedCreate(
             username=user_data.username,
