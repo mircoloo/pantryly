@@ -1,17 +1,21 @@
-from typing import List
+from typing import Annotated, List
 
 from app.core.database import get_db
 from app.repositories.repository import ProductRepository
 from app.schemas import schemas
-from app.services.service import (ProductAlreadyExistsError,
-                                  ProductNotFoundError, ProductService)
+
+from app.services.service import (
+    ProductAlreadyExistsError,
+    ProductNotFoundError,
+    ProductService,
+)
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-router = APIRouter(tags=["Products"], prefix="/v1/products")
+router = APIRouter(tags=["Products"], prefix="/v1")
 
 
-def get_product_service(db: Session = Depends(get_db)) -> ProductService:
+def get_product_service(db: Annotated[Session, Depends(get_db)]) -> ProductService:
     repo: ProductRepository = ProductRepository(db)
     return ProductService(repo)
 
@@ -39,11 +43,11 @@ def _to_http_exception(exc: Exception) -> HTTPException:
 
 
 @router.post(
-    "", response_model=schemas.ProductShow, status_code=status.HTTP_201_CREATED
+    "/products", response_model=schemas.ProductShow, status_code=status.HTTP_201_CREATED
 )
 def create_product(
     request: schemas.ProductCreate,
-    service: ProductService = Depends(get_product_service),
+    service: Annotated[ProductService, Depends(get_product_service)]
 ):
     try:
         return service.create_product(request)
@@ -52,7 +56,7 @@ def create_product(
 
 
 @router.get(
-    "", response_model=List[schemas.ProductShow], status_code=status.HTTP_200_OK
+    "/users/{user_id}/products", response_model=List[schemas.ProductShow], status_code=status.HTTP_200_OK
 )
 def list_products_for_user(
     user_id: int,
@@ -98,7 +102,7 @@ def get_product_by_barcode(
 
 
 @router.get(
-    "/{product_id}", response_model=schemas.ProductShow, status_code=status.HTTP_200_OK
+    "/priducts/{product_id}", response_model=schemas.ProductShow, status_code=status.HTTP_200_OK
 )
 def get_product_by_id(
     product_id: int,
@@ -111,7 +115,7 @@ def get_product_by_id(
         raise _to_http_exception(exc) from exc
 
 
-@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product_for_user(
     product_id: int,
     user_id: int,

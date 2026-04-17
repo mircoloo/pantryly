@@ -28,16 +28,6 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-@app.get("/products/{user_id}", response_class=HTMLResponse)
-async def read_posts(request: Request, user_id: int):
-    
-    async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://localhost:8000/v1/products?user_id={user_id}")
-        posts = response.json()
-        
-    return templates.TemplateResponse(
-        request=request, name="item.html", context={"posts": posts}
-    )
 
 @app.get("/", status_code=status.HTTP_200_OK, tags=["Health"])
 async def health_check():

@@ -1,25 +1,16 @@
-"""
-Repository per la tabella Products.
-
-Accesso diretto al DB – nessuna logica di business qui.
-Tutte le query sono filtrate per user_id (multi-tenancy):
-l'utente vede e gestisce solo i propri prodotti.
-"""
-
-from app.models import Product
-from app.schemas import ProductCreate
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-
+from app import models
+from app.schemas import ProductCreate
 class ProductRepository:
     def __init__(self, db: Session):
         self.db: Session = db
 
     def create_product(
         self, request: ProductCreate
-    ) -> Product:
-        """Crea un nuovo prodotto associato all'utente. Solleva 400 se nome o barcode già esistono per l'utente."""
-        new_product = Product(
+    ) -> models.Product:
+        new_product = models.Product(
             user_id=request.user_id,
             name=request.name,
             expiration_date=request.expiration_date,
@@ -30,40 +21,46 @@ class ProductRepository:
         self.db.refresh(new_product)
         return new_product
 
-    def get_products(self, user_id: int) -> list[Product]:
-        return (
-            self.db.query(Product)
-            .filter(Product.user_id == user_id)
-            .all()
-        )
+    def get_products(self, user_id: int) -> list[models.Product]:
+        
+        return list(self.db.execute( 
+                                    select(models.Product).where(models.Product.user_id == user_id) 
+                                    )
+                    .scalars()
+                    .all())
+        # return (
+            # self.db.query(Product)
+            # .filter(Product.user_id == user_id)
+            # .all()
+            # )
 
-    def get_product_by_id(self, id: int, user_id: int) -> Product | None:
+    def get_product_by_id(self, id: int, user_id: int) -> models.Product | None:
         product = (
-            self.db.query(Product)
+            self.db.query(models.Product)
             .filter(
-                Product.id == id,
-                Product.user_id == user_id,
+                models.Product.id == id,
+                models.Product.user_id == user_id,
             )
             .first()
         )
         return product
 
-    def get_product_by_barcode(self, barcode: str, user_id: int) -> Product | None:
+    def get_product_by_barcode(self, barcode: str, user_id: int) -> models.Product | None:
         product = (
-            self.db.query(Product)
+            self.db.query(models.Product)
             .filter(
-                Product.user_id == user_id, Product.barcode == barcode
+                models.Product.user_id == user_id, models.Product.barcode == barcode
             )
             .first()
         )
         return product
 
-    def get_product_by_name(self, name: str, user_id: int) -> Product | None:
+    def get_product_by_name(self, name: str, user_id: int) -> models.Product | None:
         product = (
-            self.db.query(Product)
+            self.db.query(models.Product)
             .filter(
-                Product.user_id == user_id,
-                Product.name == name,
+                models.Product.user_id == user_id,
+                models.Product.name == name,
             )
             .first()
         )
@@ -71,10 +68,10 @@ class ProductRepository:
 
     def delete_product(self, id: int, user_id: int) -> None:
         product = (
-            self.db.query(Product)
+            self.db.query(models.Product)
             .filter(
-                Product.id == id,
-                Product.user_id == user_id,
+                models.Product.id == id,
+                models.Product.user_id == user_id,
             )
             .first()
         )

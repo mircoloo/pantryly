@@ -1,12 +1,3 @@
-"""
-Auth Service – Microservizio di autenticazione Pantryly.
-
-Gestisce:
-  - Registrazione utenti (POST /v1/users)
-  - Login e generazione JWT (POST /v1/auth/login)
-  - Query utenti (GET /v1/users, GET /v1/users/{id})
-"""
-
 import logging
 
 from fastapi import FastAPI
