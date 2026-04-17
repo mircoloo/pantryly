@@ -1,6 +1,7 @@
 
 
 import logging
+
 from fastapi import HTTPException, status
 
 from app.core.authHandler import AuthHandler
@@ -8,7 +9,7 @@ from app.core.hashHelper import HashHelper
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import (UserCreate, UserHashedCreate, UserLogin,
-                              UserWithToken)
+                              Token)
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class UserService:
         return self.repo.get_by_username(username)
 
     # ── Login ────────────────────────────────────────────────────────
-    def login(self, user_login: UserLogin) -> UserWithToken:
+    def login(self, user_login: UserLogin) -> Token:
         """
         Verifica le credenziali e restituisce un JWT.
 
@@ -74,4 +75,4 @@ class UserService:
                 detail="Unable to process request",
             )
         # Formato OAuth2 standard: access_token + token_type
-        return UserWithToken(access_token=token, token_type="bearer")
+        return Token(access_token=token, token_type="bearer")

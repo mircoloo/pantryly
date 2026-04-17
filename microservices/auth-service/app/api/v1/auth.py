@@ -1,10 +1,3 @@
-"""
-Endpoint di autenticazione (login).
-
-Questo modulo espone le rotte per l'autenticazione degli utenti.
-La registrazione avviene tramite il modulo user.py (POST /v1/users).
-"""
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 

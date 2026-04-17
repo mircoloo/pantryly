@@ -1,27 +1,22 @@
-"""
-Configurazione centralizzata dell'auth-service.
-
-Le variabili vengono caricate automaticamente dal file .env tramite pydantic-settings.
-Il JWT_SECRET DEVE essere lo stesso valore usato nel Gateway.
-"""
-
-from pydantic_settings import BaseSettings
+from pydantic import SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Config(BaseSettings):
-    """Impostazioni del servizio di autenticazione."""
+class Settings(BaseSettings):
+    """Settings class for all the auth and user microservice variables"""
+
+    model_config = SettingsConfigDict(
+        env_file = ".env",
+        env_file_encoding = "utf-8"
+    )
 
     # ── Database ─────────────────────────────────────────────────────
     DATABASE_URL: str = ""
 
     # ── JWT ───────────────────────────────────────────────────────────
-    JWT_SECRET: str = ""  # OBBLIGATORIO: impostare nel .env
+    JWT_SECRET: SecretStr
     JWT_ALGORITHM: str = "HS256"
-    JWT_EXPIRATION_TIME: int = 15  # minuti
-
-    class Config:
-        env_file = ".env"
+    JWT_EXPIRATION_MINUTES: int = 30 # minutes
 
 
-# Istanza singleton importata da tutti i moduli
-config = Config()
+settings = Settings() # Loaded from .env file

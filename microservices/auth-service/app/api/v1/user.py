@@ -8,12 +8,10 @@ tramite il proxy /auth/register.
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-
-from app.services.user_service import UserAlreadyExistsError
 from app.core.database import get_db
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserResponse
-from app.services.user_service import UserService
+from app.services.user_service import UserAlreadyExistsError, UserService
 
 router = APIRouter(
     prefix="/v1/users",
