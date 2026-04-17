@@ -17,13 +17,18 @@ def get_user_service(db: Session = Depends(get_db)):
     repo = UserRepository(db)
     return UserService(repo)
 
+# TO add the auth service different form user service
+# def get_auth_service(db: Session = Depends(get_db)):
+#     repo = UserRepository(db)
+#     return UserService(repo)
+
 
 @router.post("/login")
 def login(user: UserLogin, service: UserService = Depends(get_user_service)):
     """
-    Effettua il login e restituisce un JWT.
+    Login the user and response with JWT token
 
     Body: { "username": "...", "password": "..." }
-    Risposta: { "token": "<jwt>" }
+    Response: { "token": "<jwt>" }
     """
     return service.login(user)
