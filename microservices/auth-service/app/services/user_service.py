@@ -4,8 +4,8 @@ import logging
 
 from fastapi import HTTPException, status
 
-from app.core.authHandler import AuthHandler
-from app.core.hashHelper import HashHelper
+from app.core.auth_handler import AuthHandler
+from app.core.hash_helper import get_password_hash, verify_password
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import (UserCreate, UserHashedCreate, UserLogin,
@@ -17,6 +17,9 @@ class UserAlreadyExistsError(Exception):
     def __init__(self, username: str):
         self.username = username
         super().__init__(username)
+        
+class WrongCredentialsError(Exception):
+    pass
 class UserService:
 
     def __init__(self, repo: UserRepository):
@@ -28,7 +31,7 @@ class UserService:
         existing = self.repo.get_by_username(user_data.username)
         if existing:
             raise UserAlreadyExistsError(username=user_data.username)
-        hashed_password = HashHelper.get_password_hash(user_data.password)
+        hashed_password = get_password_hash(user_data.password)
         user_hashed = UserHashedCreate(
             username=user_data.username,
             hashed_password=hashed_password,
@@ -48,12 +51,11 @@ class UserService:
         """Restituisce un utente per username, o None."""
         return self.repo.get_by_username(username)
 
-    # ── Login ────────────────────────────────────────────────────────
+    # ── Login ──────────────────────────────────────────────────────── # TO MODIFY THE ERORS
     def login(self, user_login: UserLogin) -> Token:
         """
-        Verifica le credenziali e restituisce un JWT.
+        Verify the token and resturn the payload
 
-        Nota: NON logghiamo password/hash per motivi di sicurezza.
         """
         user = self.repo.get_by_username(user_login.username)
         if not user:
@@ -62,13 +64,10 @@ class UserService:
                 detail="User not found",
             )
 
-        if not HashHelper.verify_password(user_login.password, user.hashed_password):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Check your credentials",
-            )
+        if not verify_password(user_login.password, user.hashed_password):
+            raise WrongCredentialsError
 
-        token = AuthHandler.sign_jwt(user.id)
+        token = AuthHandler.sign_jwt({"user_id":user.id})
         if not token:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

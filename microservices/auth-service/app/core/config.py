@@ -19,4 +19,4 @@ class Settings(BaseSettings):
     JWT_EXPIRATION_MINUTES: int = 30 # minutes
 
 
-settings = Settings() # Loaded from .env file
+settings = Settings() # type: ignore[call-arg] # Loaded from .env file

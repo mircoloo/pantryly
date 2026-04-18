@@ -23,7 +23,7 @@ def get_user_service(db: Session = Depends(get_db)):
 #     return UserService(repo)
 
 
-@router.post("/login")
+@router.post("/")
 def login(user: UserLogin, service: UserService = Depends(get_user_service)):
     """
     Login the user and response with JWT token
