@@ -2,8 +2,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserCreate(BaseModel):
-    username: str = Field(min_length=8)
-    password: str = Field(min_length=8)
+    username: str = Field(min_length=1)
+    password: str = Field(min_length=4)
 
 
 class UserHashedCreate(BaseModel):

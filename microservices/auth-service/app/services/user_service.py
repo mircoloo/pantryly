@@ -18,7 +18,7 @@ class UserAlreadyExistsError(Exception):
         self.username = username
         super().__init__(username)
         
-class WrongCredentialsError(Exception):
+class IncorrectCredentials(Exception):
     pass
 class UserService:
 
@@ -58,14 +58,11 @@ class UserService:
 
         """
         user = self.repo.get_by_username(user_login.username)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found",
-            )
+        
 
-        if not verify_password(user_login.password, user.hashed_password):
-            raise WrongCredentialsError
+        if not user or not verify_password(user_login.password, user.hashed_password):
+            raise IncorrectCredentials
+        
 
         token = AuthHandler.sign_jwt({"user_id":user.id})
         if not token:
