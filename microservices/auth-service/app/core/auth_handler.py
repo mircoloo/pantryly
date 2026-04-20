@@ -43,7 +43,7 @@ class AuthHandler:
             algorithm=JWT_ALGORITHM)
 
     @staticmethod
-    def decode_jwt(token: str) -> dict:
+    def decode_jwt(token: str) -> dict[str, Any] | None:
         try:
             return jwt.decode(
                 token,

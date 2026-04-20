@@ -33,6 +33,16 @@ function run_uvicorn:inventory {
   --port 8000 --host 0.0.0.0 --reload
 }
 
+function pytest:
+
+function test:inventory {
+    source "$WORK_DIR/microservices/inventory-service/.venv/bin/activate"
+    echo "$WORK_DIR/microservices/inventory-service/.venv/bin/activate"
+    uvicorn app.main:app \
+  --app-dir "$WORK_DIR/microservices/inventory-service" \
+  --port 8000 --host 0.0.0.0 --reload
+}
+
 
 function help {
     echo "$0 <task> <args>"

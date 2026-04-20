@@ -63,8 +63,12 @@ class UserService:
         if not user or not verify_password(user_login.password, user.hashed_password):
             raise IncorrectCredentials
         
-
-        token = AuthHandler.sign_jwt({"user_id":user.id})
+        to_sign = {
+            "user_id":user.id,
+                   }
+        
+        token = AuthHandler.sign_jwt(to_sign)
+        print(AuthHandler.decode_jwt(token))
         if not token:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
