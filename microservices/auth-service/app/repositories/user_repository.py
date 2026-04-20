@@ -1,11 +1,12 @@
-from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.models.user import User
 from app.schemas.user import UserHashedCreate
 
 
 class UserRepository:
+    """This class encapsulate all the querys on the user table"""
 
     def __init__(self, db: Session):
         self.db = db

@@ -26,13 +26,14 @@ def get_user_service(db: Session = Depends(get_db)):
 def _to_http_exception(exc: Exception) -> HTTPException:
     if isinstance(exc, UserAlreadyExistsError):
         return HTTPException(
-                 status_code=status.HTTP_400_BAD_REQUEST,
-                 detail="Username already exists",
-             )
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists",
+        )
     return HTTPException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail="Unexpected server error",
     )
+
 
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, service: UserService = Depends(get_user_service)):
