@@ -12,21 +12,12 @@ router = APIRouter(
     tags=["Auth"],
 )
 
-def _to_http_exception(exc: Exception):
-    if isinstance(exc, IncorrectCredentials):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password"
-        )
-    return HTTPException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail="Internal server error"
-    )
 
 def get_user_service(db: Session = Depends(get_db)):
     """Factory dependency: crea UserService con il repository iniettato."""
     repo = UserRepository(db)
     return UserService(repo)
+
 
 # TO add the auth service different form user service
 # def get_auth_service(db: Session = Depends(get_db)):
@@ -47,3 +38,14 @@ def login(user: UserLogin, service: UserService = Depends(get_user_service)):
     except Exception as exc:
         raise _to_http_exception(exc) from exc
 
+
+def _to_http_exception(exc: Exception):
+    if isinstance(exc, IncorrectCredentials):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+    return HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail="Internal server error",
+    )

@@ -16,8 +16,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
+@app.get("/")
+def check_up():
+    return {"status": "UP"}
+
+
 # Registrazione router
 app.include_router(user.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 
-logger.info("Auth service avviato")
+logger.info("Auth service started")
