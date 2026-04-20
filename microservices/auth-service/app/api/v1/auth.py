@@ -1,16 +1,15 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from typing import Annotated
 
 from app.core.database import get_db
 from app.repositories.user_repository import UserRepository
-from app.schemas.auth import Token
-from app.schemas.user import UserLogin
+from app.schemas.user import Token, UserLogin
 from app.services.user_service import UserService, IncorrectCredentials
-from fastapi.security import OAuth2PasswordRequestForm
+from app.core.auth_handler import AuthHandler
 
-from fastapi import HTTPException, status
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 
 router = APIRouter(
     prefix="/v1/auth",
@@ -30,33 +29,59 @@ def get_user_service(db: Session = Depends(get_db)):
 #     return UserService(repo)
 
 
-from fastapi.security import OAuth2PasswordRequestForm
-
-@router.post("/token", response_model=Token)
-def get_jwt_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    service: UserService = Depends(get_user_service),
-):
+@router.post("/login")
+def login(user: UserLogin, 
+          service: Annotated[UserService, Depends(get_user_service)]) -> Token:
     """
-    Authenticate user and return a JWT token.
+    Login the user and response with JWT token
 
-    Expects form data:
-    - username: str
-    - password: str
-
-    Returns:
-    - access_token: str
-    - token_type: "bearer"
+    Body: { "username": "...", "password": "..." }
+    Response: { "token": "<jwt>" }
     """
     try:
-        user = UserLogin(
-            username=form_data.username,
-            password=form_data.password,
-        )
         return service.login(user)
-
     except Exception as exc:
         raise _to_http_exception(exc) from exc
+
+
+@router.post("/verify_token")
+def verify_token(token: Annotated[str, Depends(oauth2_scheme)]) -> dict:
+    payload = AuthHandler.decode_jwt(token=token)
+    if payload is None:
+        raise HTTPException(
+            detail="Not valid token",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+    return payload
+
+
+@router.get("/introspect", status_code=status.HTTP_204_NO_CONTENT)
+def introspect_token(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    service: Annotated[UserService, Depends(get_user_service)],
+) -> Response:
+    payload = AuthHandler.decode_jwt(token=token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+        )
+
+    user_id = payload.get("user_id")
+    if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token payload",
+        )
+
+    user = service.get_user_by_id(int(user_id))
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT, headers={"X-User-Id": str(user.id)})
 
 def _to_http_exception(exc: Exception):
     if isinstance(exc, IncorrectCredentials):

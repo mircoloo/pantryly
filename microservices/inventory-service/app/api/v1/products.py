@@ -44,9 +44,8 @@ def _to_http_exception(exc: Exception) -> HTTPException:
 )
 def create_product(
     request: schemas.ProductCreate,
-     x_user_id: Annotated[int, Header()],
+    x_user_id: Annotated[int, Header(alias="X-User-Id")],
     service: ProductService = Depends(get_product_service),
-    
 ):
     try:
         return service.create_product(request, user_id=x_user_id)
@@ -55,10 +54,10 @@ def create_product(
 
 
 @router.get(
-    "/users/{user_id}/products", response_model=List[schemas.ProductShow], status_code=status.HTTP_200_OK
+    "/products", response_model=List[schemas.ProductShow], status_code=status.HTTP_200_OK
 )
 def list_products_for_user(
-     x_user_id: Annotated[int, Header()],
+    x_user_id: Annotated[int, Header(alias="X-User-Id")],
     service: ProductService = Depends(get_product_service),
 ):
     return service.get_all_products(user_id=x_user_id)
@@ -72,7 +71,7 @@ def list_products_for_user(
 )
 def get_product_by_name(
     product_name: str,
-    x_user_id: Annotated[int, Header()],
+    x_user_id: Annotated[int, Header(alias="X-User-Id")],
     service: ProductService = Depends(get_product_service),
 ):
     try:
@@ -88,7 +87,7 @@ def get_product_by_name(
 )
 def get_product_by_barcode(
     product_barcode: str,
-    x_user_id: Annotated[int, Header()],
+    x_user_id: Annotated[int, Header(alias="X-User-Id")],
     service: ProductService = Depends(get_product_service),
 ):
     try:
@@ -101,11 +100,11 @@ def get_product_by_barcode(
 
 
 @router.get(
-    "/priducts/{product_id}", response_model=schemas.ProductShow, status_code=status.HTTP_200_OK
+    "/products/{product_id}", response_model=schemas.ProductShow, status_code=status.HTTP_200_OK
 )
 def get_product_by_id(
     product_id: int,
-    x_user_id: Annotated[int, Header()],
+    x_user_id: Annotated[int, Header(alias="X-User-Id")],
     service: ProductService = Depends(get_product_service),
 ):
     try:
@@ -117,7 +116,7 @@ def get_product_by_id(
 @router.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product_for_user(
     product_id: int,
-    x_user_id: Annotated[int, Header()],
+    x_user_id: Annotated[int, Header(alias="X-User-Id")],
     service: ProductService = Depends(get_product_service),
 ):
     try:

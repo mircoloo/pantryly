@@ -8,9 +8,6 @@ from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserHashedCreate, UserLogin, Token
 
-logger = logging.getLogger(__name__)
-
-
 class UserAlreadyExistsError(Exception):
     def __init__(self, username: str):
         self.username = username
@@ -62,12 +59,12 @@ class UserService:
 
         if not user or not verify_password(user_login.password, user.hashed_password):
             raise IncorrectCredentials
-
+        
         token = AuthHandler.sign_jwt({"user_id": user.id})
         if not token:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Unable to process request",
             )
-        # Formato OAuth2 standard: access_token + token_type
+        # OAuth2 standard format: access_token + token_type
         return Token(access_token=token, token_type="bearer")

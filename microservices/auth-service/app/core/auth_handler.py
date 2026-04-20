@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta, timezone, UTC
-from typing import Dict, Any, Mapping, TypedDict
+from datetime import UTC, datetime, timedelta
+from typing import Any
 from jose import ExpiredSignatureError, JWTError, jwt
 
 from app.core.config import settings
@@ -50,6 +50,7 @@ class AuthHandler:
                 algorithms=[JWT_ALGORITHM],
             )
         except ExpiredSignatureError:
-            return {"error": "Token has expired"}
+            return None
         except JWTError:
-            return {"error": "Invalid token"}
+            return None
+        

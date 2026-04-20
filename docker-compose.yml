@@ -3,16 +3,14 @@ services:
   # ── API Gateway ──────────────────────────────────────────────────
   # Punto di ingresso unico: valida JWT e inoltra le richieste
   api-gateway:
-    build: ./api-gateaway
+    build: ./api-gateway
     container_name: api-gateway
     ports:
       - "8080:8000"          # Unica porta esposta al client
-    env_file:
-      - ./api-gateaway/.env
     depends_on:
       - auth-service
       - inventory-service
-      - ai-service
+      # - ai-service
     networks:
       - pantryly-net
     restart: unless-stopped
@@ -20,10 +18,10 @@ services:
   # ── Auth Service ─────────────────────────────────────────────────
   # Registrazione utenti + login + generazione JWT
   auth-service:
-    build: ./services/auth-service
+    build: ./microservices/auth-service
     container_name: auth-service
     env_file:
-      - ./services/auth-service/.env
+      - ./microservices/auth-service/.env
     networks:
       - pantryly-net
     restart: unless-stopped
@@ -32,24 +30,24 @@ services:
   # ── Inventory Service ────────────────────────────────────────────
   # CRUD prodotti (nome, barcode, scadenza)
   inventory-service:
-    build: ./services/inventory-service
+    build: ./microservices/inventory-service
     container_name: inventory-service
     env_file:
-      - ./services/inventory-service/.env
+      - ./microservices/inventory-service/.env
     networks:
       - pantryly-net
     restart: unless-stopped
 
   # ── AI Service ───────────────────────────────────────────────────
   # Generazione ricette, categorizzazione prodotti, chat AI
-  ai-service:
-    build: ./services/ai-service
-    container_name: ai-service
-    env_file:
-      - ./services/ai-service/.env
-    networks:
-      - pantryly-net
-    restart: unless-stopped
+  # ai-service:
+  #   build: ./microservices/ai-service
+  #   container_name: ai-service
+  #   env_file:
+  #     - ./microservices/ai-service/.env
+  #   networks:
+  #     - pantryly-net
+  #   restart: unless-stopped
 
 # ── Rete interna ────────────────────────────────────────────────────
 # Tutti i container condividono questa rete; si raggiungono
