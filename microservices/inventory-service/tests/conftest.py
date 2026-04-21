@@ -45,8 +45,8 @@ def db():
 
 
 @pytest.fixture
-def get_test_user_id() -> int:
-    return 1
+def auth_headers():
+    return {"X-User-Id": "1"}
 
 @pytest.fixture
 def client(db: Session):
