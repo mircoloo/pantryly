@@ -1,7 +1,7 @@
 from datetime import date
 
 
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, Date
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -14,5 +14,5 @@ class Product(Base):
     user_id: Mapped[int] = mapped_column(Integer)
     # user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True) For future implementation
     name: Mapped[str] = mapped_column(String)
-    barcode: Mapped[str] = mapped_column(String)
-    expiration_date: Mapped[date]
+    barcode: Mapped[str] = mapped_column(String, nullable=True)
+    expiration_date: Mapped[date] = mapped_column(Date, nullable=True)
