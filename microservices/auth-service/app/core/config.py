@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Settings class for all the auth and user microservice variables"""
+    """Settings class for ai microservice variables"""
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

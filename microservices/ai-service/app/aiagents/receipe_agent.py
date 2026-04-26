@@ -6,25 +6,20 @@ e genera suggerimenti di ricette usando Gemini.
 """
 
 import json
-from typing import List
 
+import openai
 from app import schemas
-from app.aiagents.agent_utils import gemini_client
 
 
 async def create_receipe_agent(
-    products: List[dict],
+    products: list[schemas.Product],
+    client: openai.OpenAI,
 ) -> schemas.ReceipesResponse:
-    """
-    Genera ricette basate sugli ingredienti disponibili.
-
-    Il prompt specifica che non tutti gli ingredienti devono essere usati,
-    e che la risposta deve essere in italiano.
-    """
-    query = f"""
+    products_json = json.dumps([p.model_dump(mode="json") for p in products])
+    query: str = f"""
         Dati i seguenti ingredienti:
-        {json.dumps(products, indent=2)}
-
+        {products_json}
+        
         Suggerisci una o più ricette gustose e ben bilanciate.
         Non è necessario utilizzare tutti gli ingredienti, ma la ricetta
         deve essere coerente e sensata.
@@ -34,7 +29,7 @@ async def create_receipe_agent(
     """
     messages = [{"role": "user", "content": query}]
 
-    response = gemini_client.chat.completions.parse(
+    response = client.chat.completions.parse(
         model="gemini-3-flash-preview",
         messages=messages,
         response_format=schemas.ReceipesResponse,

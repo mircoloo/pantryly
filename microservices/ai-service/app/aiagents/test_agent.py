@@ -4,8 +4,7 @@ Agente AI per la chat libera.
 Riceve un messaggio di testo e restituisce la risposta del modello Gemini.
 """
 
-from .. import schemas
-from .agent_utils import gemini_client
+from app import schemas
 
 
 async def get_response_chat(request_text: str) -> schemas.AIChatResponse:

@@ -9,7 +9,6 @@ import json
 from typing import List
 
 from app import schemas
-from app.aiagents.agent_utils import gemini_client
 
 
 async def create_categorization_products_agent(

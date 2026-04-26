@@ -39,7 +39,7 @@ class Receipe(BaseModel):
     name: str = Field(description="Il nome della ricetta")
     dish_type: str = Field(description="Il tipo di piatto (primo, dolce, ecc.)")
     ingredients: List[Product] = Field(description="Ingredienti necessari")
-    receipe: str = Field(description="I passaggi per preparare la ricetta")
+    receipe: List[str] = Field(description="I passaggi per preparare la ricetta")
 
 
 class ReceipesResponse(BaseModel):
