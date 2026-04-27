@@ -1,12 +1,12 @@
 services:
 
   # ── API Gateway ──────────────────────────────────────────────────
-  # Punto di ingresso unico: valida JWT e inoltra le richieste
+  # Single acces point for user, inventory and auth
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
     ports:
-      - "8080:8000"          # Unica porta esposta al client
+      - "8080:8000"          # API gateway exposed port
     depends_on:
       - auth-service
       - inventory-service
@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
 
   # ── Auth Service ─────────────────────────────────────────────────
-  # Registrazione utenti + login + generazione JWT
+  # Signup + JWT + validation
   auth-service:
     build: ./microservices/auth-service
     container_name: auth-service
@@ -25,10 +25,10 @@ services:
     networks:
       - pantryly-net
     restart: unless-stopped
-    # Nessuna porta esposta: accessibile solo dal gateway via rete interna
+    # No ports, it is accessible only from internal net
 
   # ── Inventory Service ────────────────────────────────────────────
-  # CRUD prodotti (nome, barcode, scadenza)
+  # CRUD products endpoint
   inventory-service:
     build: ./microservices/inventory-service
     container_name: inventory-service
@@ -39,19 +39,18 @@ services:
     restart: unless-stopped
 
   # ── AI Service ───────────────────────────────────────────────────
-  # Generazione ricette, categorizzazione prodotti, chat AI
-  # ai-service:
-  #   build: ./microservices/ai-service
-  #   container_name: ai-service
-  #   env_file:
-  #     - ./microservices/ai-service/.env
-  #   networks:
-  #     - pantryly-net
-  #   restart: unless-stopped
-
-# ── Rete interna ────────────────────────────────────────────────────
-# Tutti i container condividono questa rete; si raggiungono
-# per nome servizio (es. http://auth-service:8000)
+  # AI service for receipe generation or product categorization
+  ai-service:
+    build: ./microservices/ai-service
+    container_name: ai-service
+    env_file:
+      - ./microservices/ai-service/.env
+    networks:
+      - pantryly-net
+    restart: unless-stopped
+    ports:
+      - "8081:8000"  
+# Internal network
 networks:
   pantryly-net:
     driver: bridge
