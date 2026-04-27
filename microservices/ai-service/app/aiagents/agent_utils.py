@@ -1,24 +1,16 @@
-"""
-Utility condivise dagli agenti AI.
+from functools import lru_cache
 
-Configura il client OpenAI SDK puntando alle API di Google Gemini
-(compatibilità OpenAI).
-
-La chiave API viene caricata dalla variabile d'ambiente GOOGLE_API_KEY.
-"""
-
-
-from app.core.config import config
-from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
+from app.core.config import settings
 
-# Chiave API per Google Gemini (via OpenAI-compatible endpoint)
-google_api_key = config.GOOGLE_API_KEY
 
-# Client configurato per usare le API Gemini con l'SDK OpenAI
-gemini_client = OpenAI(
-    api_key=google_api_key,
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-)
+API_KEY = settings.GOOGLE_API_KEY
+
+
+@lru_cache(maxsize=1)
+def get_agent_client() -> OpenAI:
+    return OpenAI(
+        api_key=API_KEY,
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    )

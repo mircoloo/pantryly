@@ -1,7 +1,7 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Config(BaseSettings):
+class Settings(BaseSettings):
     """Impostazioni del servizio di autenticazione."""
 
     # ── Database ─────────────────────────────────────────────────────
@@ -9,9 +9,8 @@ class Config(BaseSettings):
     PRODUCT_SERVICE_URL: str = ""
     GOOGLE_API_KEY: str = ""
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 # Istanza singleton importata da tutti i moduli
-config = Config()
+settings = Settings()
