@@ -48,7 +48,9 @@ def create_product(
     service: ProductService = Depends(get_product_service),
 ):
     try:
-        return service.create_product(request, user_id=x_user_id)
+        created_product: schemas.ProductShow = service.create_product(request, user_id=x_user_id)
+        
+        return created_product 
     except ProductAlreadyExistsError as exc:
         raise _to_http_exception(exc) from exc
 

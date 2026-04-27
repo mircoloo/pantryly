@@ -24,7 +24,9 @@ class ProductService:
         existing_by_name = self.repo.get_product_by_name(request.name, user_id)
         if existing_by_name:
             raise ProductAlreadyExistsError("name", request.name)
-        return ProductShow.model_validate(self.repo.create_product(request, user_id))
+        created_product = self.repo.create_product(request, user_id)
+        
+        return ProductShow.model_validate(created_product)
 
     def get_all_products(self, user_id: int) -> list[ProductShow]:
         products = self.repo.get_products(user_id=user_id)
